@@ -7,5 +7,7 @@ namespace CollectionManager.Data_Access.Entities
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public bool IsAdmin { get; set; }
+        public ICollection<Collection> Collections { get; set; } = new List<Collection>();
+
     }
 }
