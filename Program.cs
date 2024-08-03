@@ -1,4 +1,6 @@
 using CollectionManager.Data_Access;
+using CollectionManager.Data_Access.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,8 @@ builder.Services.AddDbContext<CollectionMangerDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<CollectionMangerDbContext>();
 
 
 var app = builder.Build();
