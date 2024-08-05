@@ -1,8 +1,8 @@
 ﻿namespace CollectionManager.Enums
 {
-    public enum FieldType
+    public enum CustomFieldType
     {
-        Integer,
+        Integer = 0,
         String,
         MultilineText,
         Boolean,

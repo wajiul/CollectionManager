@@ -1,0 +1,122 @@
+﻿@model Collection
+<h2 class="text-muted text-center">--Add custom field for collection items--</h2>
+
+<div class="row justify-content-center">
+
+    <div class="col col-md-6" id="customFieldsContainer">
+        @foreach(var field in @Model.CustomFields)
+        {
+            <div class="input-group input-group-sm mb-3" id="@field.Id">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                <input type="text" class="form-control" value="@field.Name" readonly>
+                <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
+                <input type="text" class="form-control" value="@field.Type" readonly>
+                <button class="btn btn-danger" onclick="deleteCustomField('@field.Id')"><i class="bi bi-trash3"></i></button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col col-md-6">
+        <button type="button" id="customField" class="btn btn-sm btn-primary mb-2">Add Field</button>
+
+        <form id="customFieldForm" class="mt-3 d-none">
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text bg-light" id="inputGroup-sizing-sm">Name</span>
+                <input type="text" id="customFieldName" class="form-control" required>
+                <span class="input-group-text bg-light" id="inputGroup-sizing-sm">Type</span>
+                <select id="customFieldType" class="form-control" required>
+                    <option selected value="0">Number</option>
+                    <option value="1">String</option>
+                    <option value="2">Mutiline Text</option>
+                    <option value="3">Boolean</option>
+                    <option value="4">Date</option>
+                </select>
+                <button id="addCustomField" class="btn btn-primary">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    function removeField(id) {
+        console.log('remove ', id);
+        $(`#${id}`).remove();
+    }
+
+    function deleteCustomField(id) {
+        $.ajax({
+            url: `DeleteCustomField/${id}`,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (response) {
+                removeField(response.id);
+            }
+        })
+    }
+
+
+</script>
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+
+            $("#customFieldForm").submit(function (event) {
+                event.preventDefault();
+
+                const customField = {
+                    name: $('#customFieldName').val(),
+                    type: parseInt($('#customFieldType').val()),
+                    collectionId: '@Model.Id'
+                };
+
+                console.log(customField);
+
+                postCustomField(customField);
+            });
+
+            $("#customField").click(function () {
+                $("#customFieldForm").toggleClass("d-none");
+            });
+
+            function addCustomField(id) {
+                let name = $('#customFieldName').val();
+                let type = $('#customFieldType').val();
+                $('#customFieldsContainer').append(
+                    `
+                        <div class="input-group input-group-sm mb-3" data-fieldId = ${id}>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                            <input type="text" class="form-control" value="${name}" readonly>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
+                            <input type="text" class="form-control" value="${type}" readonly>
+                            <button class="btn btn-danger"><i class="bi bi-trash3"></i></button>
+                        </div>
+                     `
+                );
+            }
+
+           
+
+            function postCustomField(field) {
+                console.log('field', field);
+                $.ajax({
+                    url: 'addCustomField',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(field),
+                    success: function (response) {
+                        console.log(response);
+                        addCustomField(response.id);
+                        $("#customFieldForm").addClass('d-none');
+                
+                    }
+                })
+            }
+        });
+
+    </script>
+}

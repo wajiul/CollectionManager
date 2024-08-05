@@ -4,6 +4,7 @@ using CollectionManager.Data_Access;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollectionManager.Migrations
 {
     [DbContext(typeof(CollectionMangerDbContext))]
-    partial class CollectionMangerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240804113934_add_index_in_collection_and_customField")]
+    partial class add_index_in_collection_and_customField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,9 @@ namespace CollectionManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "Name", "Category")
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Name", "Category")
                         .IsUnique();
 
                     b.ToTable("collections");

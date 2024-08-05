@@ -41,9 +41,15 @@ namespace CollectionManager.Data_Access
                 .HasForeignKey(f => f.CollectionId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Collection>()
+                .HasIndex(c => new {c.UserId, c.Name, c.Category })
+                .IsUnique();
 
+            modelBuilder.Entity<CustomField>()
+                .HasIndex(cf => new { cf.Name, cf.Type, cf.CollectionId })
+                .IsUnique();
 
-             base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
