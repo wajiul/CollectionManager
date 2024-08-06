@@ -1,6 +1,7 @@
 ﻿using CollectionManager.Data_Access.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CollectionManager.Models;
 
 namespace CollectionManager.Data_Access
 {
@@ -51,5 +52,6 @@ namespace CollectionManager.Data_Access
 
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<CollectionManager.Models.ItemModel> ItemModel { get; set; } = default!;
     }
 }

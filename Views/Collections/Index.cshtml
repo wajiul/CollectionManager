@@ -52,7 +52,8 @@
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">View items</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> | 
-                <a asp-action="ManageCustomField" asp-route-collectionId="@item.Id">Manage custom field</a>
+                <a asp-action="ManageCustomField" asp-route-collectionId="@item.Id">Manage custom field</a> | 
+                <a asp-action="Create" asp-controller="Items" asp-route-collectionId="@item.Id">Add Item</a>
             </td>
         </tr>
 }
