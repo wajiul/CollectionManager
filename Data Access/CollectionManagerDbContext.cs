@@ -36,11 +36,6 @@ namespace CollectionManager.Data_Access
                  .HasForeignKey(f => f.ItemId)
                  .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<CustomField>()
-                .HasOne(c => c.Collection)
-                .WithMany(d  => d.CustomFields)
-                .HasForeignKey(f => f.CollectionId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Collection>()
                 .HasIndex(c => new {c.UserId, c.Name, c.Category })

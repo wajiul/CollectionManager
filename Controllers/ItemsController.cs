@@ -15,10 +15,60 @@ namespace CollectionManager.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index(int Id)
+        public async Task<IActionResult> Show(int Id)
         {
-            var item = await _context.items.Include(c => c.FieldValues).FirstOrDefaultAsync(x => x.Id == Id);
-            return Ok(item);
+
+            var collection = await _context.collections
+                    .Include(c => c.Items)
+                        .ThenInclude(i => i.Tags)
+                    .Include(c => c.Items)
+                        .ThenInclude(i => i.FieldValues)
+                    .Include(c => c.CustomFields)
+                    .FirstOrDefaultAsync(c => c.Id == Id);
+
+
+            var collectionModel = new CollectionModel
+            {
+                Id = Id,
+                Name = collection.Name,
+                Description = collection.Description,
+                ImageUrl = collection.ImageUrl,
+                Category = collection.Category
+            };
+
+            foreach (var item in collection.Items)
+            {
+                var fieldValues = new List<CustomFieldValueModel>();
+
+                foreach (var field in item.FieldValues)
+                {
+                    fieldValues.Add(new CustomFieldValueModel
+                    {
+                        Id = field.Id,
+                        Value = field.Value,
+                        Name = field.CustomField.Name,
+                        Type = field.CustomField.Type,
+                        ItemId = item.Id
+                    });
+                }
+
+                var curItem = new ItemModel();
+                curItem.Id = item.Id;
+                curItem.Name = item.Name;
+                curItem.CollectionId = item.CollectionId;
+                curItem.FieldValues = fieldValues;
+
+                var itemTags = new List<TagModel>();
+                foreach (var itemTag in item.Tags)
+                {
+                    itemTags.Add(new TagModel { Id = itemTag.Id, Name = itemTag.Name });    
+                }
+
+                curItem.Tags = JsonConvert.SerializeObject(itemTags); 
+                collectionModel.Items.Add(curItem);
+            }
+
+            return View(collectionModel);
         }
 
         public async Task<IActionResult> Create(int collectionId)
@@ -49,9 +99,7 @@ namespace CollectionManager.Controllers
         {
             if(ModelState.IsValid)
             {
-                //var jsonTags = newItem.Tags.Split(',').ToList();
                 var tagValues = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags);
-                //var tags = JsonConvert.DeserializeObject<List<string>>(newItem.Tags);
 
                 var tagList = new List<Tag>();
                 foreach (var tag in tagValues)
@@ -75,15 +123,9 @@ namespace CollectionManager.Controllers
                         CustomFieldId = field.Id
                     });
                 }
-                try
-                {
-                    await _context.items.AddAsync(item);
-                    await _context.SaveChangesAsync();
-                }
-                catch(Exception ex)
-                {
 
-                }
+                await _context.items.AddAsync(item);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index", new {Id = item.Id});
             }

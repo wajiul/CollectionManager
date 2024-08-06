@@ -7,6 +7,5 @@ namespace CollectionManager.Data_Access.Entities
         public string Name { get; set; } = string.Empty;
         public CustomFieldType Type { get; set; }
         public int CollectionId { get; set; }
-        public Collection Collection { get; set; }
     }
 }
