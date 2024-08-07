@@ -3,6 +3,7 @@ using CollectionManager.Data_Access.Entities;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Newtonsoft.Json;
 
 namespace CollectionManager.Controllers
@@ -15,7 +16,7 @@ namespace CollectionManager.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Show(int Id)
+        public async Task<IActionResult> Index(int collectionId)
         {
 
             var collection = await _context.collections
@@ -24,12 +25,12 @@ namespace CollectionManager.Controllers
                     .Include(c => c.Items)
                         .ThenInclude(i => i.FieldValues)
                     .Include(c => c.CustomFields)
-                    .FirstOrDefaultAsync(c => c.Id == Id);
+                    .FirstOrDefaultAsync(c => c.Id == collectionId);
 
 
             var collectionModel = new CollectionModel
             {
-                Id = Id,
+                Id = collectionId,
                 Name = collection.Name,
                 Description = collection.Description,
                 ImageUrl = collection.ImageUrl,
@@ -69,6 +70,44 @@ namespace CollectionManager.Controllers
             }
 
             return View(collectionModel);
+        }
+
+        public async Task<IActionResult> Details(int Id)
+        {
+            var item = await _context.items
+                .Include(t => t.Tags)
+                .Include(f => f.FieldValues)
+                    .ThenInclude(c => c.CustomField)
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            var itemTags = new List<TagModel>();
+            foreach (var itemTag in item.Tags)
+            {
+                itemTags.Add(new TagModel { Id = itemTag.Id, Name = itemTag.Name });
+            }
+
+            var fieldValues = new List<CustomFieldValueModel>();
+
+            foreach (var field in item.FieldValues)
+            {
+                fieldValues.Add(new CustomFieldValueModel
+                {
+                    Id = field.Id,
+                    Value = field.Value,
+                    Name = field.CustomField.Name,
+                    Type = field.CustomField.Type,
+                    ItemId = item.Id
+                });
+            }
+
+            var itemModel = new ItemModel
+            {
+                Name = item.Name,
+                Tags = JsonConvert.SerializeObject(itemTags),
+                FieldValues = fieldValues
+            };
+
+            return View(itemModel);
         }
 
         public async Task<IActionResult> Create(int collectionId)
@@ -127,10 +166,109 @@ namespace CollectionManager.Controllers
                 await _context.items.AddAsync(item);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", new {Id = item.Id});
+                return RedirectToAction("Show", new {collectionId = item.CollectionId});
             }
 
            return View(newItem);
         }
+
+
+        public async Task<IActionResult> Edit(int Id)
+        {
+            var item = await _context.items
+                .Include(t => t.Tags)
+                .Include(f => f.FieldValues)
+                    .ThenInclude(c => c.CustomField)
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            var itemTags = new List<string>();
+            foreach (var itemTag in item.Tags)
+            {
+                itemTags.Add(itemTag.Name);
+            }
+
+            var fieldValues = new List<CustomFieldValueModel>();
+
+            foreach (var field in item.FieldValues)
+            {
+                fieldValues.Add(new CustomFieldValueModel
+                {
+                    Id = field.Id,
+                    Value = field.Value,
+                    Name = field.CustomField.Name,
+                    Type = field.CustomField.Type,
+                    ItemId = item.Id
+                });
+            }
+
+            var itemModel = new ItemModel
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Tags = JsonConvert.SerializeObject(itemTags),
+                FieldValues = fieldValues
+            };
+
+            return View(itemModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int Id, ItemModel updatedItem)
+        {
+            if (Id != updatedItem.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var item = await _context.items
+                    .Include(i => i.Tags)
+                    .Include(i => i.FieldValues)
+                    .FirstOrDefaultAsync(i => i.Id == Id);
+
+                if (item == null)
+                {
+                    return NotFound();
+                }
+
+                item.Name = updatedItem.Name;
+
+                var existingTags = item.Tags.ToList();
+                var newTags = JsonConvert.DeserializeObject<List<TagValue>>(updatedItem.Tags);
+
+                var tagsToAdd = newTags.Where(nt => existingTags.All(et => et.Name != nt.Value)).Select(nt => new Tag { Name = nt.Value }).ToList();
+                var tagsToRemove = existingTags.Where(et => newTags.All(nt => nt.Value != et.Name)).Select(et => new Tag { Name = et.Name }).ToList();
+
+                foreach (var tag in tagsToAdd)
+                {
+                    item.Tags.Add(tag);
+                }
+
+                foreach (var tag in tagsToRemove)
+                {
+                    item.Tags.Remove(tag);
+                }
+
+                var existingFieldValues = item.FieldValues.ToList();
+                var newFieldValues = updatedItem.FieldValues;
+
+                foreach (var field in updatedItem.FieldValues)
+                {
+                    var fieldValue = existingFieldValues.FirstOrDefault(x => x.Id == field.Id);
+                    if (fieldValue != null)
+                    {
+                        fieldValue.Value = field.Value;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", new { collectionId = item.CollectionId });
+            }
+
+            return View(updatedItem);
+        }
+
     }
 }

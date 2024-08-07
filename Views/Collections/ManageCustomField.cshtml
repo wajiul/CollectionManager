@@ -85,7 +85,7 @@
 
             function addCustomField(id) {
                 let name = $('#customFieldName').val();
-                let type = $('#customFieldType').val();
+                let type = $('#customFieldType').text();
                 $('#customFieldsContainer').append(
                     `
                         <div class="input-group input-group-sm mb-3" data-fieldId = ${id}>
