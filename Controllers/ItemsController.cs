@@ -28,7 +28,7 @@ namespace CollectionManager.Controllers
                     .FirstOrDefaultAsync(c => c.Id == collectionId);
 
 
-            var collectionModel = new CollectionModel
+            var collectionModel = new CollectionWithItemsModel
             {
                 Id = collectionId,
                 Name = collection.Name,
@@ -155,7 +155,7 @@ namespace CollectionManager.Controllers
 
                 foreach(var field in newItem.FieldValues)
                 {
-                    item.FieldValues.Add(new CustomFieldValue
+                    item.FieldValues.Add(new CustomFieldValue 
                     {
                         Value = field.Value,
                         ItemId = field.ItemId,
@@ -166,7 +166,7 @@ namespace CollectionManager.Controllers
                 await _context.items.AddAsync(item);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Show", new {collectionId = item.CollectionId});
+                return RedirectToAction("Index", new {collectionId = item.CollectionId});
             }
 
            return View(newItem);

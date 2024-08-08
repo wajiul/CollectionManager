@@ -10,6 +10,7 @@ using CollectionManager.Data_Access.Entities;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Identity;
 using CollectionManager.Enums;
+using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
@@ -28,39 +29,6 @@ namespace CollectionManager.Controllers
         // GET: Collections
         public async Task<IActionResult> Index()
         {
-            var custimField = new CustomField
-            {
-                Name = "Year",
-            };
-            
-
-            var customField2 = new CustomField
-            {
-                Name = "Year"
-            };
-
-            var collection = new Collection
-            {
-                Name = "Book",
-                Category = "Adventure",
-                ImageUrl = "image",
-                UserId = _userManager.Users.First().Id
-            };
-
-            collection.CustomFields.Add(custimField);
-            collection.CustomFields.Add(customField2);
-
-            try
-            {
-
-                await _context.collections.AddAsync(collection);
-
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-
-            }
 
             var collectionMangerDbContext = _context.collections.Include(c => c.User);
             return View(await collectionMangerDbContext.ToListAsync());
@@ -89,8 +57,11 @@ namespace CollectionManager.Controllers
         // GET: Collections/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+            var collection = new CollectionModel
+            {
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            };
+            return View(collection);
         }
 
         // POST: Collections/Create
@@ -133,7 +104,18 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
-            return View(collection);
+
+            var collectionModel = new CollectionModel
+            {
+                Id = collection.Id,
+                Name = collection.Name,
+                Description = collection.Description,
+                Category = collection.Category,
+                ImageUrl = collection.ImageUrl,
+                UserId = collection.UserId
+            };
+
+            return View(collectionModel);
         }
 
         // POST: Collections/Edit/5

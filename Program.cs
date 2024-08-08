@@ -1,5 +1,6 @@
 using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
+using CollectionManager.Data_Access.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ builder.Services.AddDbContext<CollectionMangerDbContext>(options =>
 });
 
 builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<CollectionMangerDbContext>();
-
+builder.Services.AddScoped<CollectionRepository>();
 
 var app = builder.Build();
 

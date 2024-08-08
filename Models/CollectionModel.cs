@@ -15,6 +15,10 @@ namespace CollectionManager.Models
         public string ImageUrl { get; set; } = string.Empty;
         [Required]
         public string UserId { get; set; } = string.Empty;
+    }
+    public class CollectionWithItemsModel: CollectionModel
+    {
         public ICollection<ItemModel> Items { get; set; } = new List<ItemModel>();
     }
+
 }
