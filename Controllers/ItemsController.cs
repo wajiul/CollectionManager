@@ -270,5 +270,42 @@ namespace CollectionManager.Controllers
             return View(updatedItem);
         }
 
+        public async Task<IActionResult> Like(LikeModel like)
+        {
+            var existing = await _context.likes.FirstOrDefaultAsync(l => l.UserId == like.UserId && l.ItemId == like.ItemId);
+            if(existing == null)
+            {
+                var likeEntity = new Like
+                {
+                    UserId = like.UserId,
+                    ItemId = like.ItemId
+                };
+
+                await _context.likes.AddAsync(likeEntity);
+                await _context.SaveChangesAsync();
+            }
+           return Ok(new { Message = "Like added successfully"});
+        }
+
+        public async Task<IActionResult> Comment(CommentModel comment)
+        {
+            var existing = await _context.comments.FirstOrDefaultAsync(c => c.UserId == comment.UserId && c.ItemId == comment.ItemId);
+            if (existing == null)
+            {
+                var commentEntiry = new Comment
+                {
+                    Text = comment.Text,
+                    UserId = comment.UserId,
+                    ItemId = comment.ItemId,
+                    CreatedAt = DateTime.Now
+                };
+                await _context.comments.AddAsync(commentEntiry);
+                await _context.SaveChangesAsync();  
+            }
+            return Ok(new { Message = "Comment added successfully" });
+        }
+
+
+
     }
 }

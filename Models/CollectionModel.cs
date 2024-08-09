@@ -21,4 +21,15 @@ namespace CollectionManager.Models
         public ICollection<ItemModel> Items { get; set; } = new List<ItemModel>();
     }
 
+
+    public class CollectionWithItemsReactionModel: CollectionModel
+    {
+        public IEnumerable<ItemWithReactionModel> Items { get; set; } = new List<ItemWithReactionModel>();
+    }
+
+    public class CollectionWithItemsReactionCountModel: CollectionModel
+    {
+        public IEnumerable<ItemWithReactionCountModel> Items { get; set; } = new List<ItemWithReactionCountModel>();
+    }
+
 }

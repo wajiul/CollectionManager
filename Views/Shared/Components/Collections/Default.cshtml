@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CollectionModel>
+﻿@model IEnumerable<CollectionWithItemCountModel>
 <div class="container">
     <table class="table">
         <thead>
@@ -7,6 +7,7 @@
                 <th>Description</th>
                 <th>Category</th>
                 <th>Author</th>
+                <th>Items</th>
             </tr>
         </thead>
         <tbody>
@@ -16,7 +17,8 @@
                     <td>@collection.Name</td>
                     <td>@collection.Description</td>
                     <td>@collection.Category</td>
-
+                    <td>@collection.UserId</td>
+                    <td>@collection.ItemCount</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@collection.Id">Edit</a> |
                         <a asp-action="Index" asp-controller="Items" asp-route-collectionId="@collection.Id">View items</a> |

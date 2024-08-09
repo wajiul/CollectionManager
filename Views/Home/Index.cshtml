@@ -10,4 +10,7 @@
         >Create New</a>
 </p>
 
-@await Component.InvokeAsync("Collections")
+  @* @await Component.InvokeAsync("Collections") *@
+
+ @await Component.InvokeAsync("CollectionItems", new {collectionId = 4, displayAction = true});
+

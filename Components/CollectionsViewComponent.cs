@@ -14,21 +14,8 @@ namespace CollectionManager.Components
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var collectionEntities = await _collectionRepository.GetCollections();
-            var collectionModels = new List<CollectionModel>();
-            foreach (var collection in collectionEntities)
-            {
-                collectionModels.Add(new CollectionModel
-                {
-                    Id = collection.Id,
-                    Name = collection.Name,
-                    Description = collection.Description,
-                    Category = collection.Category,
-                    ImageUrl = collection.ImageUrl,
-                    UserId = collection.UserId
-                });
-            }
-            return View(collectionModels);
+            var collections = await _collectionRepository.GetCollections();
+            return View(collections);
         }
        
     }

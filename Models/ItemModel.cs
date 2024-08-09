@@ -10,4 +10,16 @@ namespace CollectionManager.Models
         public int CollectionId { get; set; }
         public List<CustomFieldValueModel> FieldValues { get; set; } = new List<CustomFieldValueModel>();
     }
+
+    public class ItemWithReactionModel : ItemViewModel
+    {
+        public List<LikeModel> Likes { get; set; } = new List<LikeModel>();
+        public List<CommentModel> Comments { get; set; } = new List<CommentModel>();
+    }
+
+    public class ItemWithReactionCountModel : ItemViewModel
+    {
+        public int Likes { get; set; }
+        public int Comments { get; set; }
+    }
 }
