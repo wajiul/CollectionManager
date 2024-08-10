@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
-    //[Route("collections")]
+    [Route("/profile/{userId}/collections")]
     public class CollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -26,7 +26,7 @@ namespace CollectionManager.Controllers
             _userManager = userManager;
         }
 
-        // GET: Collections
+        [HttpGet("{id}")]
         public async Task<IActionResult> Index(int? Id)
         {
             if(Id == null)

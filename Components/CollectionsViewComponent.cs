@@ -12,10 +12,15 @@ namespace CollectionManager.Components
         {
             _collectionRepository = collectionRepository;
         }
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string? userId)
         {
-            var collections = await _collectionRepository.GetCollections();
-            return View(collections);
+            if (userId == null)
+            {
+                var collections = await _collectionRepository.GetCollections();
+                return View(collections);
+            }
+            var userCollections = await _collectionRepository.GetUserCollectionsAsync(userId);
+            return View(userCollections);
         }
        
     }

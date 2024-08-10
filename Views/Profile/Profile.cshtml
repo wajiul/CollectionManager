@@ -1,0 +1,9 @@
+﻿@model string 
+@{
+    string userId = @Model;
+}
+
+<div class="container">
+    <h2 class="text-center text-dark mb-2">Collections</h2>
+    @await Component.InvokeAsync("Collections", new { userId = @userId })
+</div>

@@ -31,7 +31,22 @@ namespace CollectionManager.Data_Access.Repositories
         } 
 
         
-
+        public async Task<IEnumerable<CollectionWithItemCountModel>> GetUserCollectionsAsync(string userId)
+        {
+            return await _context.collections
+                 .Where(c => c.UserId == userId)
+                 .Select(c => new CollectionWithItemCountModel
+                 {
+                     Id = c.Id,
+                     Name = c.Name,
+                     Description = c.Description,
+                     Category = c.Category,
+                     ImageUrl = c.ImageUrl,
+                     UserId = c.UserId,
+                     ItemCount = c.Items.Count,
+                 })
+                 .ToListAsync();
+        }
         public async Task<CollectionWithItemsReactionCountModel?> GetCollectionWithItemsReactionCount(int collectionId)
         {
             var collection = await _context.collections
