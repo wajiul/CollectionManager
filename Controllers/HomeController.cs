@@ -1,6 +1,7 @@
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
@@ -15,6 +16,7 @@ namespace CollectionManager.Controllers
 
         public IActionResult Index()
         {
+           
             return View();
         }
 

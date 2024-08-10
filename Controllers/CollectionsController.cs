@@ -27,13 +27,17 @@ namespace CollectionManager.Controllers
         }
 
         // GET: Collections
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int? Id)
         {
-
-            var collectionMangerDbContext = _context.collections.Include(c => c.User);
-            return View(await collectionMangerDbContext.ToListAsync());
+            return View(Id);
         }
 
+        public IActionResult Items(int? Id)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["UserId"] = userId;
+            return View(Id);
+        }
 
         // GET: Collections/Details/5
         public async Task<IActionResult> Details(int? id)

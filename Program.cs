@@ -16,6 +16,7 @@ builder.Services.AddDbContext<CollectionMangerDbContext>(options =>
 
 builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<CollectionMangerDbContext>();
 builder.Services.AddScoped<CollectionRepository>();
+builder.Services.AddScoped<ItemRepository>();
 
 var app = builder.Build();
 
@@ -36,6 +37,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}");
 
 app.Run();

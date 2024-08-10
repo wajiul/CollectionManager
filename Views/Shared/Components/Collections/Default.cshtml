@@ -21,7 +21,7 @@
                     <td>@collection.ItemCount</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@collection.Id">Edit</a> |
-                        <a asp-action="Index" asp-controller="Items" asp-route-collectionId="@collection.Id">View items</a> |
+                        <a asp-controller="Collections" asp-route-Id="@collection.Id">View items</a> |
                         <a asp-action="Delete" asp-route-id="@collection.Id">Delete</a> |
                         <a asp-action="ManageCustomField" asp-route-collectionId="@collection.Id">Manage custom field</a> |
                         <a asp-action="Create" asp-controller="Items" asp-route-collectionId="@collection.Id">Add Item</a>

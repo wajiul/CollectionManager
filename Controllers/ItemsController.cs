@@ -287,25 +287,25 @@ namespace CollectionManager.Controllers
            return Ok(new { Message = "Like added successfully"});
         }
 
-        public async Task<IActionResult> Comment(CommentModel comment)
+        [HttpPost]
+        public async Task<IActionResult> Comment([FromBody] CommentModel comment)
         {
-            var existing = await _context.comments.FirstOrDefaultAsync(c => c.UserId == comment.UserId && c.ItemId == comment.ItemId);
-            if (existing == null)
+            //var existing = await _context.comments.FirstOrDefaultAsync(c => c.UserId == comment.UserId && c.ItemId == comment.ItemId);
+            //if (existing != null)
+            //{
+            //    return BadRequest("User already commented");
+            //}
+            var commentEntity = new Comment
             {
-                var commentEntiry = new Comment
-                {
-                    Text = comment.Text,
-                    UserId = comment.UserId,
-                    ItemId = comment.ItemId,
-                    CreatedAt = DateTime.Now
-                };
-                await _context.comments.AddAsync(commentEntiry);
-                await _context.SaveChangesAsync();  
-            }
+                Text = comment.Text,
+                UserId = comment.UserId,
+                ItemId = comment.ItemId,
+                CreatedAt = DateTime.Now
+            };
+            await _context.comments.AddAsync(commentEntity);
+            await _context.SaveChangesAsync();  
             return Ok(new { Message = "Comment added successfully" });
         }
-
-
 
     }
 }

@@ -1,0 +1,76 @@
+﻿@model int 
+@{
+    int itemId = @Model;
+    string userId = (string)ViewData["UserId"];
+}
+
+<div class="container">
+    <h1>Item</h1>
+    @await Component.InvokeAsync("Item", new {Id = itemId})
+</div>
+
+
+@section Scripts {
+    <script>
+        console.log('its working');
+
+        $(document).ready(function () {
+            var $commentText = $('#commentText');
+            var $commentButton = $('#commentButton');
+
+            $commentText.on('focus', function () {
+                $commentButton.show();
+            });
+
+
+            $commentText.on('input', function () {
+                if ($commentText.val().trim() !== "") {
+                    $commentButton.prop('disabled', false);
+                } else {
+                    $commentButton.prop('disabled', true);
+                }
+            });
+
+
+            $commentText.on('blur', function () {
+                if ($commentText.val().trim() === "") {
+                    $commentButton.hide();
+                }
+            });
+
+            $('#commentButton').click(function () {
+                var comment = {
+                    text: $('#commentText').val(),
+                    itemId: parseInt('@itemId'),
+                    userId: '@userId',
+                    createdAt: new Date()
+                };
+
+                postComment(comment);
+            });
+
+            function postComment(comment) {
+                console.log(comment);
+                $.ajax({
+                    url: '/items/comment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(comment),
+                    success: function (response) {
+                        console.log(response);
+                        var c = `<div class="mb-2">
+                            <p>${comment.userId}</p>
+                            <p>${comment.text}</p>
+                            </div>`;
+
+                        $("#commentsContainer").prepend(c);
+                        $commentText.clear();
+                        $commentButton.hide();
+                    }
+                });
+            }
+        });
+
+    </script>
+
+}

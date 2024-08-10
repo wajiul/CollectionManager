@@ -1,16 +1,5 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<p>
-    <a 
-        asp-action="Create" 
-        asp-controller="Collections"
-        class="btn btn-primary px-5 rounded-0"
-        >Create New</a>
-</p>
-
-  @* @await Component.InvokeAsync("Collections") *@
-
- @await Component.InvokeAsync("CollectionItems", new {collectionId = 4, displayAction = true});
-
+﻿
+<div class="container">
+    <h2 class="text-center text-dark mb-2">Collections</h2>
+    @await Component.InvokeAsync("Collections")
+</div>

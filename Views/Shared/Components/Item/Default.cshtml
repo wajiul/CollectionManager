@@ -1,0 +1,47 @@
+﻿@model ItemWithReactionModel
+
+<div class="container">
+    <div class="row g-2">
+        <div class="col-sm-2">Name</div>
+        <div class="col-sm-10">@Model.Name</div>
+    </div>
+    <div class="row g-2">
+        <div class="col-sm-2">Tags</div>
+        <div class="col-sm-10">
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="badge bg-primary">@tag.Name</span>
+            }
+        </div>
+
+        @foreach (var field in Model.FieldValues)
+        {
+            <div class="row g-2">
+                <div class="col-sm-2">@field.Name</div>
+                <div class="col-sm-10">@field.Value</div>
+            </div>
+        }
+    </div>
+    <p>Like: @Model.Likes.Count</p>
+    
+    <p>Comments</p>
+    <div>
+        <div>
+            <div class="mb-2">
+                <input id="commentText" class="form-control" />
+            </div>
+            <button id="commentButton" class="btn btn-primary rounded-5" style="display: none;" disabled>Comment</button>
+        </div>
+    </div>
+
+    <div id="commentsContainer">
+        @foreach(var comment in Model.Comments)
+        {
+            <div class="mb-2">
+                <p>@comment.UserId</p>
+                <p>@comment.Text</p>
+            </div>
+        }
+    </div>
+</div>
+
