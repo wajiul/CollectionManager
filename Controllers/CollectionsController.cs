@@ -27,8 +27,17 @@ namespace CollectionManager.Controllers
         }
 
         // GET: Collections
-        public IActionResult Index(int? Id)
+        public async Task<IActionResult> Index(int? Id)
         {
+            if(Id == null)
+            {
+                return NotFound();
+            }
+            var collection = await _context.collections.FindAsync(Id);
+            if(collection == null) { 
+                return NotFound(); 
+            }
+
             return View(Id);
         }
 

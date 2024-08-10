@@ -1,5 +1,6 @@
 ﻿using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -17,7 +18,6 @@ namespace CollectionManager.Components
         public async Task<IViewComponentResult> InvokeAsync(int collectionId, bool displayAction = false)
         {
             var collectionItems = await _collectionRepository.GetCollectionWithItemsReactionCount(collectionId);
-
             ViewData["Action"] = displayAction;
             return View(collectionItems);
         }

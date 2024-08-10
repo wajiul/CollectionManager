@@ -12,11 +12,12 @@
 
 @section Scripts {
     <script>
-        console.log('its working');
 
         $(document).ready(function () {
             var $commentText = $('#commentText');
             var $commentButton = $('#commentButton');
+            var $likeButton = $('#likeButton');
+            let likeCount = parseInt($('#likeCount').text());
 
             $commentText.on('focus', function () {
                 $commentButton.show();
@@ -48,6 +49,29 @@
 
                 postComment(comment);
             });
+
+            $likeButton.click(function () {
+                let like = {
+                    itemId: parseInt('@itemId'),
+                    userId: '@userId'
+                }
+
+                postLike(like);
+            });
+
+            function postLike(like) {
+                console.log(like);
+                $.ajax({
+                    url: '/items/like',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(like),
+                    success: function (response) {
+                        likeCount++;
+                        $('#likeCount').innerText = likeCount;
+                    }
+                });
+            }
 
             function postComment(comment) {
                 console.log(comment);

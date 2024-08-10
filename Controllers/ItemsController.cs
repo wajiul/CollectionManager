@@ -270,20 +270,23 @@ namespace CollectionManager.Controllers
             return View(updatedItem);
         }
 
-        public async Task<IActionResult> Like(LikeModel like)
+        [HttpPost]
+        public async Task<IActionResult> Like([FromBody] LikeModel like)
         {
             var existing = await _context.likes.FirstOrDefaultAsync(l => l.UserId == like.UserId && l.ItemId == like.ItemId);
-            if(existing == null)
+            if(existing != null)
             {
-                var likeEntity = new Like
-                {
-                    UserId = like.UserId,
-                    ItemId = like.ItemId
-                };
-
-                await _context.likes.AddAsync(likeEntity);
-                await _context.SaveChangesAsync();
+                return BadRequest(new { Message = "Already liked" });
             }
+            var likeEntity = new Like
+            {
+                UserId = like.UserId,
+                ItemId = like.ItemId
+            };
+
+            await _context.likes.AddAsync(likeEntity);
+            await _context.SaveChangesAsync();
+            
            return Ok(new { Message = "Like added successfully"});
         }
 
