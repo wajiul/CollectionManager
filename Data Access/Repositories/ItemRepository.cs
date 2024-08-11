@@ -30,6 +30,7 @@ namespace CollectionManager.Data_Access.Repositories
                         {
                             Id = f.Id,
                             Value = f.Value,
+                            Name = f.CustomField.Name,
                             Type = f.CustomField.Type,
                             ItemId = f.CustomFieldId
                         }).ToList(),

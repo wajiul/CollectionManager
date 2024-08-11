@@ -1,10 +1,15 @@
-﻿@{
-    string userId = (string)ViewData["UserId"];
-}
+﻿
 <div class="container">
-    <h2 class="text-center text-dark mb-2">Collections</h2>
-    <div>
-        <a asp-action="Create" asp-controller="Collections" class="btn btn-primary px-5 rounded-0">Create New</a>
-    </div>
-    @await Component.InvokeAsync("Collections", new {userId = @userId})
+    <h1>User's Profile</h1>
+    <ul>
+        <li>User information</li>
+        <li>Total collection</li>
+        <li>Total Items</li>
+        <li>Likes</li>
+        <li>Comments</li>
+        <li>Others</li>
+        <li>
+            <a asp-action="Index" asp-controller="ProfileCollections">Collections</a>
+        </li>
+    </ul>
 </div>

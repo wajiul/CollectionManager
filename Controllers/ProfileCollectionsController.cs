@@ -18,23 +18,15 @@ namespace CollectionManager.Controllers
             _context = context;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Index(int? Id)
+        [HttpGet("")]
+        public IActionResult Index()
         {
-            if (Id == null)
-            {
-                return NotFound();
-            }
-            var collection = await _context.collections.FindAsync(Id);
-            if (collection == null)
-            {
-                return NotFound();
-            }
-
-            return View(Id);
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["UserId"] = userId;
+            return View();
         }
 
-        [HttpGet("details/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,13 +34,18 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _context.collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (collection == null)
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var collectionExist = _context.collections.Any(c => c.UserId == userId && c.Id == id);
+
+            if (!collectionExist)
             {
                 return NotFound();
             }
+
+            var collection = await _context.collections
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             return View(collection);
         }
@@ -80,7 +77,7 @@ namespace CollectionManager.Controllers
                 _context.Add(newCollection);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "ProfileCollections");
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
             return View(collection);
@@ -149,7 +146,7 @@ namespace CollectionManager.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "ProfileCollections");
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collectionModel.UserId);
             return View(collectionModel);
@@ -225,5 +222,7 @@ namespace CollectionManager.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { Id = field.Id });
         }
+
+
     }
 }

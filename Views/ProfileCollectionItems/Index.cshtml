@@ -1,0 +1,8 @@
+﻿@model int
+
+<div class="container">
+    @await Component.InvokeAsync("CollectionItems", new { collectionId = @Model, displayAction = true })
+</div>
+
+
+

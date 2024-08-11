@@ -21,10 +21,6 @@ namespace CollectionManager.Controllers
             ViewData["UserId"] = userId;
             return View();
         }
-        [HttpGet("{userId}")]
-        public IActionResult Profile(string userId)
-        {
-            return View();
-        }
+       
     }
 }

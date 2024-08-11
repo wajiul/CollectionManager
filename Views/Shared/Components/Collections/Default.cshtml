@@ -20,11 +20,11 @@
                     <td>@collection.UserId</td>
                     <td>@collection.ItemCount</td>
                     <td>
-                        <a asp-action="Edit" asp-controller="Collections" asp-route-id="@collection.Id">Edit</a> |
-                        <a asp-action="Index" asp-controller="Collections" asp-route-Id="@collection.Id">View items</a> |
-                        <a asp-action="Delete" asp-controller="Collections" asp-route-id="@collection.Id">Delete</a> |
-                        <a asp-action="ManageCustomField" asp-controller="Collections" asp-route-collectionId="@collection.Id">Manage custom field</a> |
-                        <a asp-action="Create" asp-controller="Items" asp-route-collectionId="@collection.Id">Add Item</a>
+                        <a asp-action="Edit" asp-controller="ProfileCollections" asp-route-id="@collection.Id">Edit</a> |
+                        <a asp-action="Index" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collection.Id">View items</a> |
+                        <a asp-action="Delete" asp-controller="ProfileCollections" asp-route-id="@collection.Id">Delete</a> |
+                        <a asp-action="ManageCustomField" asp-controller="ProfileCollections" asp-route-collectionId="@collection.Id">Manage custom field</a> |
+                        <a asp-action="Create" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collection.Id">Add Item</a>
                     </td>
                 </tr>
             }

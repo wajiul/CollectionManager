@@ -1,0 +1,29 @@
+﻿@model ItemModel
+
+<div class="container">
+    <div class="row g-2">
+        <div class="col-sm-2">Name</div>
+        <div class="col-sm-10">@Model.Name</div>
+    </div>
+    <div class="row g-2">
+        <div class="col-sm-2">Tags</div>
+        <div class="col-sm-10">
+            @{
+                var tagList = JsonConvert.DeserializeObject<List<TagModel>>(@Model.Tags);
+            }
+            @foreach (var tag in tagList)
+            {
+                <span class="badge bg-primary">@tag.Name</span>
+            }
+        </div>
+
+        @foreach (var field in Model.FieldValues)
+        {
+            <div class="row g-2">
+                <div class="col-sm-2">@field.Name</div>
+                <div class="col-sm-10">@field.Value</div>
+            </div>
+        }
+    </div>
+
+</div>

@@ -18,12 +18,64 @@ namespace CollectionManager.Controllers
             _context = context;
         }
 
+        [HttpGet("")]
+        public IActionResult Index(int collectionId)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var collectionExist = _context.collections.Any(c => c.UserId == userId && c.Id == collectionId);
+
+            if (!collectionExist)
+            {
+                return NotFound();
+            }
+            return View(collectionId);
+        }
+
         [HttpGet("{id}")]
-        public IActionResult Index(int Id)
+        public IActionResult Items(int? id)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["UserId"] = userId;
-            return View(Id);
+            return View(id);
+        }
+
+        public async Task<IActionResult> Details(int Id)
+        {
+            var item = await _context.items
+                .Include(t => t.Tags)
+                .Include(f => f.FieldValues)
+                    .ThenInclude(c => c.CustomField)
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            var itemTags = new List<TagModel>();
+            foreach (var itemTag in item.Tags)
+            {
+                itemTags.Add(new TagModel { Id = itemTag.Id, Name = itemTag.Name });
+            }
+
+            var fieldValues = new List<CustomFieldValueModel>();
+
+            foreach (var field in item.FieldValues)
+            {
+                fieldValues.Add(new CustomFieldValueModel
+                {
+                    Id = field.Id,
+                    Value = field.Value,
+                    Name = field.CustomField.Name,
+                    Type = field.CustomField.Type,
+                    ItemId = item.Id
+                });
+            }
+
+            var itemModel = new ItemModel
+            {
+                Name = item.Name,
+                Tags = JsonConvert.SerializeObject(itemTags),
+                FieldValues = fieldValues
+            };
+
+            return View(itemModel);
         }
 
         [HttpGet("create")]
@@ -83,13 +135,13 @@ namespace CollectionManager.Controllers
                 await _context.items.AddAsync(item);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", new { collectionId = item.CollectionId });
+                return RedirectToAction("Index", "ProfileCollectionItems", new { collectionId = item.CollectionId });
             }
 
             return View(newItem);
         }
 
-        [HttpGet("edit/{id}")]
+        [HttpGet("{id}/edit")]
         public async Task<IActionResult> Edit(int Id)
         {
             var item = await _context.items
@@ -129,7 +181,7 @@ namespace CollectionManager.Controllers
             return View(itemModel);
         }
 
-        [HttpPost("edit/{id}")]
+        [HttpPost("{id}/edit")]
         public async Task<IActionResult> Edit(int Id, ItemModel updatedItem)
         {
             if (Id != updatedItem.Id)
@@ -181,7 +233,7 @@ namespace CollectionManager.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", new { collectionId = item.CollectionId });
+                return RedirectToAction("Items", "ProfileCollectionItems", new { id = item.Id, collectionId = item.CollectionId});
             }
 
             return View(updatedItem);

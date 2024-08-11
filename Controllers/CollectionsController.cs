@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
-    [Route("/profile/collections")]
+    [Route("collections")]
     public class CollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
