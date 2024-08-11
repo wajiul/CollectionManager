@@ -49,7 +49,7 @@
 
     function deleteCustomField(id) {
         $.ajax({
-            url: `DeleteCustomField/${id}`,
+            url: `/profile/collections/customfields/delete/${id}`,
             type: 'DELETE',
             contentType: 'application/json',
             success: function (response) {
@@ -85,15 +85,15 @@
 
             function addCustomField(id) {
                 let name = $('#customFieldName').val();
-                let type = $('#customFieldType').text();
+                let type = $('#customFieldType option:selected').text();
                 $('#customFieldsContainer').append(
                     `
-                        <div class="input-group input-group-sm mb-3" data-fieldId = ${id}>
+                        <div class="input-group input-group-sm mb-3" id=${id}>
                             <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
                             <input type="text" class="form-control" value="${name}" readonly>
                             <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
                             <input type="text" class="form-control" value="${type}" readonly>
-                            <button class="btn btn-danger"><i class="bi bi-trash3"></i></button>
+                                    <button class="btn btn-danger" onclick="deleteCustomField(${id})"><i class="bi bi-trash3"></i></button>
                         </div>
                      `
                 );
@@ -104,7 +104,7 @@
             function postCustomField(field) {
                 console.log('field', field);
                 $.ajax({
-                    url: 'addCustomField',
+                    url: '/profile/collections/customfields/add',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(field),

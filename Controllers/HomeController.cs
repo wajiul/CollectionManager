@@ -5,6 +5,7 @@ using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
+    [Route("/")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,14 +14,13 @@ namespace CollectionManager.Controllers
         {
             _logger = logger;
         }
-
+        [HttpGet("")]
         public IActionResult Index()
         {
-           
             return View();
         }
-
-        public IActionResult Privacy()
+        [HttpGet("collections")]
+        public IActionResult AllCollections()
         {
             return View();
         }

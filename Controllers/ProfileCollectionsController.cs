@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CollectionManager.Data_Access;
+using CollectionManager.Data_Access.Entities;
+using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CollectionManager.Data_Access;
-using CollectionManager.Data_Access.Entities;
-using CollectionManager.Models;
-using Microsoft.AspNetCore.Identity;
-using CollectionManager.Enums;
 using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
-    [Route("/profile/collections")]
-    public class CollectionsController : Controller
+    [Route("profile/collections")]
+    public class ProfileCollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
-        private readonly UserManager<User> _userManager;
 
-        public CollectionsController(CollectionMangerDbContext context, UserManager<User> userManager)
+        public ProfileCollectionsController(CollectionMangerDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         [HttpGet("{id}")]
@@ -34,17 +26,11 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
             var collection = await _context.collections.FindAsync(Id);
-            if (collection == null) {
+            if (collection == null)
+            {
                 return NotFound();
             }
 
-            return View(Id);
-        }
-        [HttpGet("items/{id}")]
-        public IActionResult Items(int? Id)
-        {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewData["UserId"] = userId;
             return View(Id);
         }
 
@@ -67,7 +53,6 @@ namespace CollectionManager.Controllers
             return View(collection);
         }
 
-        // GET: Collections/Create
         [HttpGet("create")]
         public IActionResult Create()
         {
@@ -185,7 +170,6 @@ namespace CollectionManager.Controllers
             {
                 return NotFound();
             }
-
             return View(collection);
         }
 
@@ -204,22 +188,23 @@ namespace CollectionManager.Controllers
         }
 
         [HttpPost("customfields/add")]
-        public async Task<IActionResult> AddCustomField([FromBody] CustomField customField) {
+        public async Task<IActionResult> AddCustomField([FromBody] CustomField customField)
+        {
             var existing = await _context.customFields
                .FirstOrDefaultAsync(
-                    c => c.CollectionId == customField.CollectionId && 
-                    c.Name == customField.Name && 
+                    c => c.CollectionId == customField.CollectionId &&
+                    c.Name == customField.Name &&
                     c.Type == customField.Type
-                );
+            );
 
-            if(existing != null)
+            if (existing != null)
             {
                 return BadRequest("Field already exist");
             }
 
             await _context.customFields.AddAsync(customField);
             await _context.SaveChangesAsync();
-            return Ok(new {Id = customField.Id});
+            return Ok(new { Id = customField.Id });
         }
 
         [HttpDelete("customfields/delete/{id}")]
@@ -230,7 +215,7 @@ namespace CollectionManager.Controllers
             var deletePermisible = _context.collections
                 .Any(c => c.UserId == userId && c.CustomFields.Any(cf => cf.Id == Id));
 
-            if(!deletePermisible)
+            if (!deletePermisible)
             {
                 return BadRequest();
             }
