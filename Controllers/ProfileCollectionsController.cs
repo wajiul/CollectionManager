@@ -1,5 +1,7 @@
-﻿using CollectionManager.Data_Access;
+﻿using AutoMapper;
+using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
+using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,10 +14,14 @@ namespace CollectionManager.Controllers
     public class ProfileCollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
+        private readonly CollectionRepository _collectionRepository;
+        private readonly IMapper _mapper;
 
-        public ProfileCollectionsController(CollectionMangerDbContext context)
+        public ProfileCollectionsController(CollectionMangerDbContext context, CollectionRepository collectionRepository, IMapper mapper)
         {
             _context = context;
+            _collectionRepository = collectionRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("")]
@@ -27,16 +33,12 @@ namespace CollectionManager.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collectionExist = _context.collections.Any(c => c.UserId == userId && c.Id == id);
+            var collectionExist = _collectionRepository.IsCollectionExist(id, userId);
 
             if (!collectionExist)
             {
@@ -74,9 +76,10 @@ namespace CollectionManager.Controllers
                     ImageUrl = collection.ImageUrl,
                     UserId = collection.UserId
                 };
-                _context.Add(newCollection);
 
-                await _context.SaveChangesAsync();
+                await _collectionRepository.CreateCollectionAsync(newCollection);
+                await _collectionRepository.SaveAsync();
+
                 return RedirectToAction("Index", "ProfileCollections");
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
@@ -91,22 +94,13 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _context.collections.FindAsync(id);
+            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
 
-            var collectionModel = new CollectionModel
-            {
-                Id = collection.Id,
-                Name = collection.Name,
-                Description = collection.Description,
-                Category = collection.Category,
-                ImageUrl = collection.ImageUrl,
-                UserId = collection.UserId
-            };
+            var collectionModel = _mapper.Map<CollectionModel>(collection);
 
             return View(collectionModel);
         }
@@ -125,15 +119,15 @@ namespace CollectionManager.Controllers
             {
                 try
                 {
-                    var collection = await _context.collections.FindAsync(id);
+                    var collection = await _collectionRepository.GetCollectionAsync(id);
 
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
                     collection.Description = collectionModel.Description;
                     collection.ImageUrl = collectionModel.ImageUrl;
 
-                    _context.Update(collection);
-                    await _context.SaveChangesAsync();
+                    _collectionRepository.UpdateCollection(collection);
+                    await _collectionRepository.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -160,47 +154,40 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _context.collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
             }
+            _collectionRepository.DeleteCollection(collection);
+            await _collectionRepository.SaveAsync();
             return View(collection);
         }
 
         [HttpGet("{collectionId}/customfields")]
         public async Task<IActionResult> ManageCustomField(int collectionId)
         {
-            var collection = await _context.collections
-                .Include(c => c.CustomFields)
-                .FirstOrDefaultAsync(x => x.Id == collectionId);
+            var collection = await _collectionRepository.GetCollectionWithCustomFieldAsync(collectionId);
             return View(collection);
         }
 
         private bool CollectionExists(int id)
         {
-            return _context.collections.Any(e => e.Id == id);
+            return _collectionRepository.IsCollectionExist(id);
         }
 
         [HttpPost("customfields/add")]
         public async Task<IActionResult> AddCustomField([FromBody] CustomField customField)
         {
-            var existing = await _context.customFields
-               .FirstOrDefaultAsync(
-                    c => c.CollectionId == customField.CollectionId &&
-                    c.Name == customField.Name &&
-                    c.Type == customField.Type
-            );
+            var existing = _collectionRepository.IsCustomFieldExist(customField);
 
-            if (existing != null)
+            if (existing == true)
             {
                 return BadRequest("Field already exist");
             }
 
-            await _context.customFields.AddAsync(customField);
-            await _context.SaveChangesAsync();
+            await _collectionRepository.CreateCustomField(customField);
+            await _collectionRepository.SaveAsync();
             return Ok(new { Id = customField.Id });
         }
 
@@ -209,17 +196,18 @@ namespace CollectionManager.Controllers
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var deletePermisible = _context.collections
-                .Any(c => c.UserId == userId && c.CustomFields.Any(cf => cf.Id == Id));
+            var deletePermisible = _collectionRepository.DoesUserHasCustomField(Id, userId);
 
             if (!deletePermisible)
             {
                 return BadRequest();
             }
-            var field = await _context.customFields.FindAsync(Id);
 
-            _context.customFields.Remove(field);
-            await _context.SaveChangesAsync();
+            var field = await _collectionRepository.GetCustomFieldAsync(Id);
+
+            _collectionRepository.DeleteCustomField(field);
+            await _collectionRepository.SaveAsync();
+
             return Ok(new { Id = field.Id });
         }
 

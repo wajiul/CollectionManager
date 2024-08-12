@@ -84,5 +84,75 @@ namespace CollectionManager.Data_Access.Repositories
 
             return collection;
         }
+
+
+        public async Task<Collection?> GetCollectionAsync(int Id)
+        {
+            return await _context.collections.FindAsync(Id);
+        }
+
+        public async Task<CustomField?> GetCustomFieldAsync(int Id)
+        {
+            return await _context.customFields.FindAsync(Id);
+        }
+        public async Task<Collection?> GetCollectionWithCustomFieldAsync(int Id)
+        {
+            return await _context.collections
+                .Include(c => c.CustomFields)
+                .FirstOrDefaultAsync(x => x.Id == Id);
+        }
+
+        public bool IsCollectionExist(int Id)
+        {
+            return _context.collections.Any(c => c.Id == Id);
+        }
+
+        public bool IsCollectionExist(int Id, string userId)
+        {
+            return _context.collections.Any(c => c.UserId == userId && c.Id == Id);
+        }
+        public bool IsCustomFieldExist(CustomField customField)
+        {
+            return _context.customFields
+                .Any(
+                    c => c.CollectionId == customField.CollectionId &&
+                    c.Name == customField.Name &&
+                    c.Type == customField.Type);
+        }
+
+        public bool DoesUserHasCustomField(int Id, string userId)
+        {
+            return _context.collections
+                .Any(c => c.UserId == userId && c.CustomFields.Any(cf => cf.Id == Id));
+        }
+
+        public async Task CreateCollectionAsync(Collection collection)
+        {
+            await _context.collections.AddAsync(collection);
+        }
+
+        public async Task CreateCustomField(CustomField field)
+        {
+            await _context.customFields.AddAsync(field);
+        }
+        public void UpdateCollection(Collection collection)
+        {
+            _context.collections.Update(collection);
+        }
+        public void DeleteCollection(Collection collection)
+        {
+            _context.collections.Remove(collection);
+        }
+        public void DeleteCustomField(CustomField customField)
+        {
+            _context.customFields .Remove(customField);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 }
