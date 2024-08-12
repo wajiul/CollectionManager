@@ -45,11 +45,11 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _context.collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var collection = await _collectionRepository.GetCollectionAsync(id);
 
-            return View(collection);
+            var collectionModel = _mapper.Map<CollectionModel>(collection);
+
+            return View(collectionModel);
         }
 
         [HttpGet("create")]
@@ -57,33 +57,27 @@ namespace CollectionManager.Controllers
         {
             var collection = new CollectionModel
             {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? ""
             };
             return View(collection);
         }
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CollectionModel collection)
+        public async Task<IActionResult> Create(CollectionModel collectionModel)
         {
             if (ModelState.IsValid)
             {
-                var newCollection = new Collection
-                {
-                    Name = collection.Name,
-                    Description = collection.Description,
-                    Category = collection.Category,
-                    ImageUrl = collection.ImageUrl,
-                    UserId = collection.UserId
-                };
-
-                await _collectionRepository.CreateCollectionAsync(newCollection);
+                var collectionEntity = _mapper.Map<Collection>(collectionModel);
+                await _collectionRepository.CreateCollectionAsync(collectionEntity);
                 await _collectionRepository.SaveAsync();
+
+                TempData["ToastrMessage"] = "Collection created successfully";
+                TempData["ToastrType"] = "success";
 
                 return RedirectToAction("Index", "ProfileCollections");
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
-            return View(collection);
+            return View(collectionModel);
         }
 
         [HttpGet("edith/{id}")]
@@ -126,7 +120,6 @@ namespace CollectionManager.Controllers
                     collection.Description = collectionModel.Description;
                     collection.ImageUrl = collectionModel.ImageUrl;
 
-                    _collectionRepository.UpdateCollection(collection);
                     await _collectionRepository.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -142,7 +135,6 @@ namespace CollectionManager.Controllers
                 }
                 return RedirectToAction("Index", "ProfileCollections");
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collectionModel.UserId);
             return View(collectionModel);
         }
 
@@ -210,7 +202,5 @@ namespace CollectionManager.Controllers
 
             return Ok(new { Id = field.Id });
         }
-
-
     }
 }
