@@ -21,6 +21,10 @@ namespace CollectionManager.Models
         public ICollection<ItemModel> Items { get; set; } = new List<ItemModel>();
     }
 
+    public class CollectionWithCustomFieldModel : CollectionModel
+    {
+        public ICollection<CustomField> CustomFields { get; set; } = new List<CustomField>();
+    }
 
     public class CollectionWithItemsReactionModel: CollectionModel
     {

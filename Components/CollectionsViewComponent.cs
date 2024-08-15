@@ -12,8 +12,12 @@ namespace CollectionManager.Components
         {
             _collectionRepository = collectionRepository;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string? userId)
+        public async Task<IViewComponentResult> InvokeAsync(string? userId, bool displayAction = false, bool displayAuthor = true)
         {
+
+            ViewData["Action"] = displayAction;
+            ViewData["DisplayAuthor"] = displayAuthor;
+
             if (userId == null)
             {
                 var collections = await _collectionRepository.GetCollections();

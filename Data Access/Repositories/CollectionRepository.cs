@@ -24,6 +24,7 @@ namespace CollectionManager.Data_Access.Repositories
                      Description = c.Description,
                      Category = c.Category,
                      ImageUrl = c.ImageUrl,
+                     Author = c.User.FirstName,
                      UserId = c.UserId,
                      ItemCount = c.Items.Count,
                  })
@@ -42,6 +43,7 @@ namespace CollectionManager.Data_Access.Repositories
                      Description = c.Description,
                      Category = c.Category,
                      ImageUrl = c.ImageUrl,
+                     Author = c.User.FirstName,
                      UserId = c.UserId,
                      ItemCount = c.Items.Count,
                  })

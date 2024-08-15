@@ -5,5 +5,5 @@
 
 <div class="container">
     <h2 class="text-center text-dark mb-2">Collections</h2>
-    @await Component.InvokeAsync("Collections", new { userId = @userId })
+    @await Component.InvokeAsync("Collections", new { userId = @userId, displayAction = true, displayAuthor = false})
 </div>

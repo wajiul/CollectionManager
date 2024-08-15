@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<CollectionWithItemCountModel>
+
+@{
+    bool actionPermitted = (bool)ViewData["Action"];
+    bool displayAuthor = (bool)ViewData["DisplayAuthor"];
+}
 <div class="container">
     <table class="table">
         <thead>
@@ -6,8 +11,8 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Category</th>
-                <th>Author</th>
                 <th>Items</th>
+                <th>Author</th>
             </tr>
         </thead>
         <tbody>
@@ -17,15 +22,26 @@
                     <td>@collection.Name</td>
                     <td>@collection.Description</td>
                     <td>@collection.Category</td>
-                    <td>@collection.UserId</td>
                     <td>@collection.ItemCount</td>
-                    <td>
-                        <a asp-action="Edit" asp-controller="ProfileCollections" asp-route-id="@collection.Id">Edit</a> |
-                        <a asp-action="Index" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collection.Id">View items</a> |
-                        <a asp-action="Delete" asp-controller="ProfileCollections" asp-route-id="@collection.Id">Delete</a> |
-                        <a asp-action="ManageCustomField" asp-controller="ProfileCollections" asp-route-collectionId="@collection.Id">Manage custom field</a> |
-                        <a asp-action="Create" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collection.Id">Add Item</a>
-                    </td>
+                    @if(displayAuthor)
+                    {
+                        <td>
+                            <a asp-action="Index" asp-controller="OtherUserProfile" asp-route-userId="@collection.UserId" asp-route-id="@collection.Id">@collection.Author</a>
+                        </td>
+                    }
+
+                    @if(actionPermitted)
+                    {
+                        <td>
+                             <partial name="_CollectionActionPartial" model="@collection.Id" />
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a class="btn btn-secondary" asp-action="Index" asp-controller="Collections" asp-route-id="@collection.Id">View</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

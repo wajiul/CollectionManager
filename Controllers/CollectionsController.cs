@@ -40,7 +40,7 @@ namespace CollectionManager.Controllers
 
             return View(Id);
         }
-        [HttpGet("items/{id}")]
+        [HttpGet("{collectionId}/items/{id}")]
         public IActionResult Items(int? Id)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

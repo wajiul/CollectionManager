@@ -2,15 +2,15 @@
 
 @if(_singInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
+    <div>
         <a class="nav-link d-inline" asp-controller="Account" asp-action="Profile">@User.Identity.Name</a>|
         <a class="nav-link text-dark d-inline" asp-controller="Account" asp-action="SignOut">Logout</a>
-    </li>
+    </div>
 }
 else
 {
-    <li class="nav-item">
+    <div>
         <a class="nav-link d-inline" asp-controller="Account" asp-action="Login">Login</a>|
         <a class="nav-link d-inline" asp-controller="Account" asp-action="SignUp">SignUp</a>
-    </li>
+    </div>
 }
