@@ -85,6 +85,17 @@ namespace CollectionManager.Data_Access.Repositories
             return collection;
         }
 
+        public async Task<List<CustomFieldValueModel>> GetCustomFieldsOfCollection(int collectionId)
+        {
+            return await _context.customFields
+                .Where(c => c.CollectionId == collectionId)
+                .Select(c => new CustomFieldValueModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Type = c.Type
+                }).ToListAsync();
+        }
 
         public async Task<Collection?> GetCollectionAsync(int Id)
         {

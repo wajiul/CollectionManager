@@ -20,3 +20,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.error-message {
+  color:rgb(231, 87, 87);
+  font-size: 12px;
+  font-weight: 300;
+}

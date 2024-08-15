@@ -1,4 +1,5 @@
 ﻿using Azure;
+using NpgsqlTypes;
 
 namespace CollectionManager.Data_Access.Entities
 {
@@ -10,8 +11,10 @@ namespace CollectionManager.Data_Access.Entities
         public int CollectionId { get; set; }
         public List<CustomFieldValue> FieldValues { get; set; } = new List<CustomFieldValue>();
 
-        public ICollection<Comment> Comments { get; set; }  
-        public ICollection<Like> Likes { get; set; }
+        public ICollection<Comment> Comments { get; set; }  = new List<Comment>();
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
+
+        public NpgsqlTsVector search_vector { get; set; }
 
     }
 }

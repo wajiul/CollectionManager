@@ -138,7 +138,7 @@ namespace CollectionManager.Controllers
             return View(collectionModel);
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpGet("{id}/delete")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,9 +151,23 @@ namespace CollectionManager.Controllers
             {
                 return NotFound();
             }
+            var collectionModel = _mapper.Map<CollectionModel>(collection);
+            return View(collectionModel);
+        }
+        [HttpPost("delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            if(collection == null)
+            {
+                return NotFound();
+            }
+
             _collectionRepository.DeleteCollection(collection);
             await _collectionRepository.SaveAsync();
-            return View(collection);
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet("{collectionId}/customfields")]

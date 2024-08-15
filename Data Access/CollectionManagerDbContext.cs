@@ -18,7 +18,7 @@ namespace CollectionManager.Data_Access
         public DbSet<Like> likes { get; set; }
         public DbSet<CustomField> customFields { get; set; }
         public DbSet<CustomFieldValue> customFieldValues { get; set; }   
-        public DbSet<Tag> tags { get; set; }    
+        public DbSet<Tag> tags { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,15 +38,40 @@ namespace CollectionManager.Data_Access
 
 
             modelBuilder.Entity<Collection>()
-                .HasIndex(c => new {c.UserId, c.Name, c.Category })
+                .HasIndex(c => new { c.UserId, c.Name, c.Category })
                 .IsUnique();
 
             modelBuilder.Entity<CustomField>()
                 .HasIndex(cf => new { cf.Name, cf.Type, cf.CollectionId })
                 .IsUnique();
 
+            modelBuilder.Entity<Item>()
+            .Property(i => i.search_vector)
+            .HasColumnType("tsvector");
+
+            modelBuilder.Entity<Collection>()
+            .Property(i => i.search_vector)
+            .HasColumnType("tsvector");
+
+
             base.OnModelCreating(modelBuilder);
         }
-        public DbSet<CollectionManager.Models.ItemModel> ItemModel { get; set; } = default!;
+
+        public void UpdateItemSearchVectors()
+        {
+            var sql = @"
+            UPDATE public.""items""
+            SET search_vector = to_tsvector('simple', ""Name"" || ' ' ||
+                COALESCE((SELECT string_agg(concat(cfv.""Value"", ' ', cf.""Type""), ' ') 
+                          FROM public.""customFieldValues"" AS cfv
+                          JOIN public.""customFields"" AS cf ON cf.""Id"" = cfv.""CustomFieldId""
+                          WHERE cfv.""ItemId"" = public.""items"".""Id""), '') || ' ' ||
+                COALESCE((SELECT string_agg(""Text"", ' ') 
+                          FROM public.""comments"" 
+                          WHERE ""ItemId"" = public.""items"".""Id""), '')
+            );";
+            Database.ExecuteSqlRaw(sql);
+        }
+
     }
 }

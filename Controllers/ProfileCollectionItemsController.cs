@@ -1,5 +1,7 @@
-﻿using CollectionManager.Data_Access;
+﻿using AutoMapper;
+using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
+using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +14,16 @@ namespace CollectionManager.Controllers
     public class ProfileCollectionItemsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
+        private readonly CollectionRepository _collectionRepository;
+        private readonly ItemRepository _itemRepository;
+        private readonly IMapper _mapper;
 
-        public ProfileCollectionItemsController(CollectionMangerDbContext context)
+        public ProfileCollectionItemsController(CollectionMangerDbContext context, CollectionRepository collectionRepository, ItemRepository itemRepository, IMapper mapper)
         {
             _context = context;
+            _collectionRepository = collectionRepository;
+            _itemRepository = itemRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("")]
@@ -23,7 +31,7 @@ namespace CollectionManager.Controllers
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collectionExist = _context.collections.Any(c => c.UserId == userId && c.Id == collectionId);
+            var collectionExist = _collectionRepository.IsCollectionExist(collectionId, userId);
 
             if (!collectionExist)
             {
@@ -81,22 +89,9 @@ namespace CollectionManager.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create(int collectionId)
         {
-            var fields = await _context.customFields
-                .Where(x => x.CollectionId == collectionId).ToListAsync();
-
             var itemModel = new ItemModel();
             itemModel.CollectionId = collectionId;
-
-            foreach (var cf in fields)
-            {
-                var customFieldValue = new CustomFieldValueModel()
-                {
-                    Id = cf.Id,
-                    Name = cf.Name,
-                    Type = cf.Type,
-                };
-                itemModel.FieldValues.Add(customFieldValue);
-            }
+            itemModel.FieldValues = await _collectionRepository.GetCustomFieldsOfCollection(collectionId);
 
             return View(itemModel);
 
@@ -107,31 +102,7 @@ namespace CollectionManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tagValues = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags);
-
-                var tagList = new List<Tag>();
-                foreach (var tag in tagValues)
-                {
-                    tagList.Add(new Tag { Name = tag.Value });
-                }
-
-                var item = new Item
-                {
-                    Name = newItem.Name,
-                    Tags = tagList,
-                    CollectionId = newItem.CollectionId
-                };
-
-                foreach (var field in newItem.FieldValues)
-                {
-                    item.FieldValues.Add(new CustomFieldValue
-                    {
-                        Value = field.Value,
-                        ItemId = field.ItemId,
-                        CustomFieldId = field.Id
-                    });
-                }
-
+                var item = _mapper.Map<Item>(newItem);
                 await _context.items.AddAsync(item);
                 await _context.SaveChangesAsync();
 
@@ -144,57 +115,22 @@ namespace CollectionManager.Controllers
         [HttpGet("{id}/edit")]
         public async Task<IActionResult> Edit(int Id)
         {
-            var item = await _context.items
-                .Include(t => t.Tags)
-                .Include(f => f.FieldValues)
-                    .ThenInclude(c => c.CustomField)
-                .FirstOrDefaultAsync(x => x.Id == Id);
-
-            var itemTags = new List<string>();
-            foreach (var itemTag in item.Tags)
-            {
-                itemTags.Add(itemTag.Name);
-            }
-
-            var fieldValues = new List<CustomFieldValueModel>();
-
-            foreach (var field in item.FieldValues)
-            {
-                fieldValues.Add(new CustomFieldValueModel
-                {
-                    Id = field.Id,
-                    Value = field.Value,
-                    Name = field.CustomField.Name,
-                    Type = field.CustomField.Type,
-                    ItemId = item.Id
-                });
-            }
-
-            var itemModel = new ItemModel
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Tags = JsonConvert.SerializeObject(itemTags),
-                FieldValues = fieldValues
-            };
-
+            var item = await _itemRepository.GetItemAsync(Id);
+            var itemModel = _mapper.Map<ItemModel>(item);
             return View(itemModel);
         }
 
         [HttpPost("{id}/edit")]
-        public async Task<IActionResult> Edit(int Id, ItemModel updatedItem)
+        public async Task<IActionResult> Edit(int id, ItemModel updatedItem)
         {
-            if (Id != updatedItem.Id)
+            if (id != updatedItem.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var item = await _context.items
-                    .Include(i => i.Tags)
-                    .Include(i => i.FieldValues)
-                    .FirstOrDefaultAsync(i => i.Id == Id);
+                var item = await _itemRepository.GetItemAsync(id);
 
                 if (item == null)
                 {
@@ -207,7 +143,12 @@ namespace CollectionManager.Controllers
                 var newTags = JsonConvert.DeserializeObject<List<TagValue>>(updatedItem.Tags);
 
                 var tagsToAdd = newTags.Where(nt => existingTags.All(et => et.Name != nt.Value)).Select(nt => new Tag { Name = nt.Value }).ToList();
-                var tagsToRemove = existingTags.Where(et => newTags.All(nt => nt.Value != et.Name)).Select(et => new Tag { Name = et.Name }).ToList();
+                
+                var tagsToRemove = existingTags.Where(et => newTags.All(nt => nt.Value != et.Name))
+                    .Select(et => new Tag { 
+                        Name = et.Name
+                    }
+                ).ToList();
 
                 foreach (var tag in tagsToAdd)
                 {
@@ -216,7 +157,11 @@ namespace CollectionManager.Controllers
 
                 foreach (var tag in tagsToRemove)
                 {
-                    item.Tags.Remove(tag);
+                    var tagRemove = item.Tags.FirstOrDefault(t => t.Name == tag.Name);
+                    if (tagRemove != null)
+                    {
+                        item.Tags.Remove(tagRemove);
+                    }
                 }
 
                 var existingFieldValues = item.FieldValues.ToList();
@@ -239,22 +184,45 @@ namespace CollectionManager.Controllers
             return View(updatedItem);
         }
 
+        [HttpGet("{id}/delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _itemRepository.GetItemAsync(id);
+            if(item == null)
+            {
+                return NotFound();
+            }
+            var itemModel = _mapper.Map<ItemModel>(item);
+            return View(itemModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var item = await _itemRepository.GetItemAsync(id);
+            if(item == null)
+            {
+                return NotFound();
+            }
+            _itemRepository.Delete(item);
+            await _itemRepository.SaveAsync();
+            return RedirectToAction("Index", new {collectionId = item.CollectionId});
+        }
+
+
         [HttpPost("like")]
         public async Task<IActionResult> Like([FromBody] LikeModel like)
         {
-            var existing = await _context.likes.FirstOrDefaultAsync(l => l.UserId == like.UserId && l.ItemId == like.ItemId);
-            if (existing != null)
+            var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
+            if (liked)
             {
                 return BadRequest(new { Message = "Already liked" });
             }
-            var likeEntity = new Like
-            {
-                UserId = like.UserId,
-                ItemId = like.ItemId
-            };
 
-            await _context.likes.AddAsync(likeEntity);
-            await _context.SaveChangesAsync();
+            var likeEntity = _mapper.Map<Like>(like);
+
+            await _itemRepository.AddLikeAsync(likeEntity);
+            await _itemRepository.SaveAsync();
 
             return Ok(new { Message = "Like added successfully" });
         }
@@ -267,15 +235,10 @@ namespace CollectionManager.Controllers
                 return BadRequest();
             }
 
-            var commentEntity = new Comment
-            {
-                Text = comment.Text,
-                UserId = comment.UserId,
-                ItemId = comment.ItemId,
-                CreatedAt = DateTime.Now
-            };
-            await _context.comments.AddAsync(commentEntity);
-            await _context.SaveChangesAsync();
+            var commentEntity = _mapper.Map<Comment>(comment); 
+            await _itemRepository.AddCommentAsync(commentEntity);
+            await _itemRepository.SaveAsync();
+
             return Ok(new { Message = "Comment added successfully" });
         }
 

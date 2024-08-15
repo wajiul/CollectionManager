@@ -1,5 +1,7 @@
-﻿using CollectionManager.Models;
+﻿using CollectionManager.Data_Access.Entities;
+using CollectionManager.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CollectionManager.Data_Access.Repositories
 {
@@ -53,5 +55,40 @@ namespace CollectionManager.Data_Access.Repositories
 
             return item;
         }
+
+        public async Task<Item?> GetItemAsync(int id)
+        {
+            return await _context.items
+                .Include(t => t.Tags)
+                .Include(f => f.FieldValues)
+                    .ThenInclude(c => c.CustomField)
+                .FirstOrDefaultAsync(x => x.Id == id);  
+        }
+
+        public bool IsUserLikedAsync(int itemId, string userId)
+        {
+            return  _context.likes.Any(x => x.ItemId == itemId && x.UserId == userId);
+        } 
+
+        public async Task AddLikeAsync(Like like)
+        {
+           await _context.likes.AddAsync(like);
+        }
+
+        public async Task AddCommentAsync(Comment comment)
+        {
+            await _context.comments.AddAsync(comment);
+        }
+
+        public void Delete(Item item)
+        {
+            _context.items.Remove(item);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+       
     }
 }

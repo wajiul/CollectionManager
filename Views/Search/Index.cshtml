@@ -1,0 +1,24 @@
+﻿@model SearchResultModel
+<h2 class="text-center text-primary">Search Result</h2>
+<div class="container">
+    @foreach(var item in @Model.Items) {
+        <div class="bg-light p-4 mb-2">
+            <span class="text-info me-4">[item]</span>
+            <a 
+                asp-controller="collections" 
+                asp-action="Items" 
+                asp-route-id="@item.Id"  
+                class="text-truncate"
+                >@item.Name</a>
+            <a>(visit collection)</a>
+        </div>
+    }
+
+    @foreach(var collection in @Model.Collections) {
+        <div class="bg-light p-4 mb-2">
+            <span class="text-info me-4">[collection]</span>
+            <a asp-controller="Collections"
+               asp-action="Items" asp-route-id="@collection.Id" class="text-truncate">@collection.Name</a>
+        </div>
+    }
+</div>
