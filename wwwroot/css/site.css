@@ -29,6 +29,10 @@ body {
 }
 
 
+.min_width-567 {
+    min-width: 567px;
+}
+
 /* Comment section  */
 .comment-date {
   font-size: 12px;

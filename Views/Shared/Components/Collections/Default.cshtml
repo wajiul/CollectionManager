@@ -5,7 +5,13 @@
     bool displayAuthor = (bool)ViewData["DisplayAuthor"];
 }
 <div class="container">
-    <table class="table">
+    <div class="d-flex justify-content-center row mt-3">
+        <div class="col card shadow p-0 min_width-567">
+            <div class="card-header bg-primary text-white text-center">
+                <h1>Collections</h1>
+            </div>
+            <div class="card-body">
+                 <table class="table table-striped text-center" style="font-size:15px;">
         <thead>
             <tr>
                 <th>Name</th>
@@ -38,12 +44,15 @@
                     }
                     else
                     {
-                        <td>
-                            <a class="btn btn-secondary" asp-action="Collection" asp-controller="Collections" asp-route-id="@collection.Id">View</a>
+                        <td style="width:2rem;">
+                            <a class="btn btn-outline-info" asp-action="Collection" asp-controller="Collections" asp-route-id="@collection.Id">View</a>
                         </td>
                     }
                 </tr>
             }
         </tbody>
     </table>
+            </div>
+        </div>
+    </div>
 </div>

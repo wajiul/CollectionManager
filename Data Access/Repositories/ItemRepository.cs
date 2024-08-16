@@ -39,7 +39,7 @@ namespace CollectionManager.Data_Access.Repositories
 
                         Likes = i.Likes.Count,
 
-                        Comments = i.Comments.Select(c => new CommentModel
+                        Comments = i.Comments.OrderByDescending(c => c.CreatedAt).Select(c => new CommentModel
                         {
                             ItemId = c.Id,
                             UserId = c.UserId,
@@ -82,7 +82,7 @@ namespace CollectionManager.Data_Access.Repositories
                     ItemId= c.Id,
                     UserId= c.UserId,
                     Text = c.Text,
-                    CreatedAt = c.CreatedAt.ToString("MM yyyy"),
+                    CreatedAt = c.CreatedAt.ToString("MMMM yyyy"),
                     Commenter = string.Concat(c.User.FirstName, ' ', c.User.LastName)
                 }).FirstOrDefaultAsync();
         }
