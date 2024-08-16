@@ -2,6 +2,7 @@
 using CollectionManager.Models;
 using CollectionManager.Data_Access.Entities;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp;
 namespace CollectionManager.Mapping
 {
     public class MappingProfile: Profile
@@ -61,6 +62,14 @@ namespace CollectionManager.Mapping
                 .ForMember(dest => dest.User, opt => opt.Ignore())
                 .ForMember(dest => dest.Item, opt => opt.Ignore());
 
+
+            CreateMap<Collection, CollectionWithCustomFieldModel>();
+
+            CreateMap<CommentModel, Comment>()
+                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.ItemId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 
         }
     }

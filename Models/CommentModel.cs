@@ -8,10 +8,11 @@ namespace CollectionManager.Models
         [Required]
         public string Text { get; set; } = string.Empty;
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; } = string.Empty;
         [Required]
         public int ItemId { get; set; }
         [Required]
         public string UserId { get; set; } = string.Empty;
+        public string Commenter { get; set; } = string.Empty;
     }
 }

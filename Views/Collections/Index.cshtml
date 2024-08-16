@@ -1,5 +1,5 @@
-﻿@model int 
-
+﻿
 <div class="container">
-    @await Component.InvokeAsync("CollectionItems", new { collectionId = @Model, displayAction  = false})
+    <h1 class="text-center text-primary mb-2">Collections</h1>
+    @await Component.InvokeAsync("Collections")
 </div>

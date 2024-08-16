@@ -37,17 +37,15 @@ namespace CollectionManager.Data_Access.Repositories
                             ItemId = f.CustomFieldId
                         }).ToList(),
 
-                        Likes = i.Likes.Select(l => new LikeModel
-                        {
-                            ItemId = l.Id,
-                            UserId = l.UserId,
-                        }).ToList(),
+                        Likes = i.Likes.Count,
 
                         Comments = i.Comments.Select(c => new CommentModel
                         {
                             ItemId = c.Id,
                             UserId = c.UserId,
-                            Text = c.Text
+                            Text = c.Text,
+                            CreatedAt = c.CreatedAt.ToString("MMMM yyyy"),
+                            Commenter = string.Concat(c.User.FirstName, ' ', c.User.LastName)
                         }).ToList()
 
                     }).FirstOrDefaultAsync();
@@ -74,6 +72,21 @@ namespace CollectionManager.Data_Access.Repositories
         {
            await _context.likes.AddAsync(like);
         }
+
+        public async Task<CommentModel?> GetCommentAsync(int id)
+        {
+            return await _context.comments
+                .Where(c => c.Id == id)
+                .Select(c => new CommentModel
+                {
+                    ItemId= c.Id,
+                    UserId= c.UserId,
+                    Text = c.Text,
+                    CreatedAt = c.CreatedAt.ToString("MM yyyy"),
+                    Commenter = string.Concat(c.User.FirstName, ' ', c.User.LastName)
+                }).FirstOrDefaultAsync();
+        }
+
 
         public async Task AddCommentAsync(Comment comment)
         {

@@ -15,6 +15,6 @@ namespace CollectionManager.Data_Access.Entities
         public ICollection<Item> Items { get; set; } = new List<Item>();
         public ICollection<CustomField> CustomFields { get; set; } = new List<CustomField>();
 
-        public NpgsqlTsVector search_vector { get; set; }
+        public NpgsqlTsVector? search_vector { get; set; }
     }
 }

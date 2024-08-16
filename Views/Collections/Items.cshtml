@@ -18,6 +18,23 @@
             var $commentButton = $('#commentButton');
             var $likeButton = $('#likeButton');
             let likeCount = parseInt($('#likeCount').text());
+            let isLiked = false;
+            getLike();
+
+
+            if (isLiked == true) {
+                console.log('likeed');
+                $likeButton.addClass('text-info');
+            } 
+
+
+            $('#comment-inputButton').on('click', function () {
+                $('#comment-input').removeClass('d-none');
+            });
+
+            $('#comment-cancel').on('click', function() {
+                $('#comment-input').addClass('d-none');
+            });
 
             $commentText.on('focus', function () {
                 $commentButton.show();
@@ -29,13 +46,6 @@
                     $commentButton.prop('disabled', false);
                 } else {
                     $commentButton.prop('disabled', true);
-                }
-            });
-
-
-            $commentText.on('blur', function () {
-                if ($commentText.val().trim() === "") {
-                    $commentButton.hide();
                 }
             });
 
@@ -54,41 +64,81 @@
                 let like = {
                     itemId: parseInt('@itemId'),
                     userId: '@userId'
-                }
+                };
 
-                postLike(like);
+                if (isLiked == false) {
+                    postLike(like);
+                }
             });
+
+            function getLike() {
+                $.ajax({
+                    url: '/items/@itemId/isliked',
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response == true) {
+                            isLiked = true;
+                            $likeButton.addClass('text-info');
+                            console.log('get like', response);
+                        }
+                    }
+                })
+            }
 
             function postLike(like) {
                 console.log(like);
                 $.ajax({
-                    url: '/items/like',
+                    url: '/collections/items/like',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(like),
                     success: function (response) {
                         likeCount++;
                         $('#likeCount').innerText = likeCount;
+                        isLiked = true;
+                        $likeButton.addClass('text-info');
                     }
                 });
             }
 
+            function commentUI(comment) {
+                const cmt = `
+                        <div class="bg-white p-2">
+                        <div class="d-flex flex-row user-info">
+                        <img
+                            class="rounded-circle"
+                            src="https://i.imgur.com/RpzrMR2.jpg"
+                            width="40"
+                        />
+                        <div class="d-flex flex-column justify-content-start ms-2">
+                            <a class="d-block font-weight-bold comment-name">${comment.commenter}</a>
+                            <span class="comment-date text-black-50">${comment.createdAt}</span>
+                        </div>
+                        </div>
+                        <div class="mt-2">
+                        <p class="comment-text">
+                            ${comment.text}
+                        </p>
+                        </div>
+                    </div>
+                `;
+                return cmt;
+            } 
             function postComment(comment) {
                 console.log(comment);
                 $.ajax({
-                    url: '/items/comment',
+                    url: '/collections/items/comment',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(comment),
                     success: function (response) {
                         console.log(response);
-                        var c = `<div class="mb-2">
-                            <p>${comment.userId}</p>
-                            <p>${comment.text}</p>
-                            </div>`;
 
+                        var c = commentUI(response);
+                        console.log(c);
                         $("#commentsContainer").prepend(c);
-                        $commentText.clear();
+                        $commentText.val('');
                         $commentButton.hide();
                     }
                 });

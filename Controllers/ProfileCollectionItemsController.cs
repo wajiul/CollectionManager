@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
-    [Route("/profile/collections/{collectionId}/items")]
+    [Route("/profile/my/collections/{collectionId}/items")]
     public class ProfileCollectionItemsController : Controller
     {
         private readonly CollectionMangerDbContext _context;

@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace CollectionManager.Controllers
 {
-    [Route("profile/collections")]
+    [Route("profile/my/collections")]
     public class ProfileCollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -174,7 +174,8 @@ namespace CollectionManager.Controllers
         public async Task<IActionResult> ManageCustomField(int collectionId)
         {
             var collection = await _collectionRepository.GetCollectionWithCustomFieldAsync(collectionId);
-            return View(collection);
+            var collectionModel = _mapper.Map<CollectionWithCustomFieldModel>(collection);
+            return View(collectionModel);
         }
 
         private bool CollectionExists(int id)

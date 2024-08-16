@@ -11,35 +11,50 @@ using CollectionManager.Models;
 using Microsoft.AspNetCore.Identity;
 using CollectionManager.Enums;
 using System.Security.Claims;
+using CollectionManager.Data_Access.Repositories;
+using AutoMapper;
 
 namespace CollectionManager.Controllers
 {
     [Route("collections")]
     public class CollectionsController : Controller
     {
-        private readonly CollectionMangerDbContext _context;
+        private readonly CollectionRepository _collectionRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
+        private readonly ItemRepository _itemRepository;
 
-        public CollectionsController(CollectionMangerDbContext context, UserManager<User> userManager)
+        public CollectionsController(  CollectionRepository collectionRepository, UserManager<User> userManager, IMapper mapper, ItemRepository itemRepository)
         {
-            _context = context;
+            _collectionRepository = collectionRepository;
             _userManager = userManager;
+            _mapper = mapper;
+            _itemRepository = itemRepository;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Index(int? Id)
+        [HttpGet("")]
+        public IActionResult Index()
         {
-            if (Id == null)
+            return View();
+        }
+
+        [HttpGet("{id}/items")]
+        public IActionResult Collection(int? id)
+        {
+            if (id == null)
             {
                 return NotFound();
             }
-            var collection = await _context.collections.FindAsync(Id);
-            if (collection == null) {
+            var exist = _collectionRepository.IsCollectionExist(id.Value);
+
+            if (!exist)
+            {
                 return NotFound();
             }
 
-            return View(Id);
+            return View(id.Value);
         }
+
         [HttpGet("{collectionId}/items/{id}")]
         public IActionResult Items(int? Id)
         {
@@ -48,197 +63,58 @@ namespace CollectionManager.Controllers
             return View(Id);
         }
 
-        [HttpGet("details/{id}")]
-        public async Task<IActionResult> Details(int? id)
+        [HttpPost("items/like")]
+        public async Task<IActionResult> Like([FromBody] LikeModel like)
         {
-            if (id == null)
+            var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
+            if (liked)
             {
-                return NotFound();
+                return BadRequest(new { Message = "Already liked" });
             }
 
-            var collection = await _context.collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (collection == null)
-            {
-                return NotFound();
-            }
+            var likeEntity = _mapper.Map<Like>(like);
 
-            return View(collection);
+            await _itemRepository.AddLikeAsync(likeEntity);
+            await _itemRepository.SaveAsync();
+
+            return Ok(new { Message = "Like added successfully" });
         }
 
-        // GET: Collections/Create
-        [HttpGet("create")]
-        public IActionResult Create()
-        {
-            var collection = new CollectionModel
-            {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            };
-            return View(collection);
-        }
-
-        [HttpPost("create")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CollectionModel collection)
-        {
-            if (ModelState.IsValid)
-            {
-                var newCollection = new Collection
-                {
-                    Name = collection.Name,
-                    Description = collection.Description,
-                    Category = collection.Category,
-                    ImageUrl = collection.ImageUrl,
-                    UserId = collection.UserId
-                };
-                _context.Add(newCollection);
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
-            return View(collection);
-        }
-
-        [HttpGet("edith/{id}")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var collection = await _context.collections.FindAsync(id);
-            if (collection == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collection.UserId);
-
-            var collectionModel = new CollectionModel
-            {
-                Id = collection.Id,
-                Name = collection.Name,
-                Description = collection.Description,
-                Category = collection.Category,
-                ImageUrl = collection.ImageUrl,
-                UserId = collection.UserId
-            };
-
-            return View(collectionModel);
-        }
-
-
-        [HttpPost("edith/{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CollectionModel collectionModel)
-        {
-            if (id != collectionModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var collection = await _context.collections.FindAsync(id);
-
-                    collection.Name = collectionModel.Name;
-                    collection.Category = collectionModel.Category;
-                    collection.Description = collectionModel.Description;
-                    collection.ImageUrl = collectionModel.ImageUrl;
-
-                    _context.Update(collection);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CollectionExists(collectionModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", collectionModel.UserId);
-            return View(collectionModel);
-        }
-
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var collection = await _context.collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (collection == null)
-            {
-                return NotFound();
-            }
-
-            return View(collection);
-        }
-
-        [HttpGet("{collectionId}/customfields")]
-        public async Task<IActionResult> ManageCustomField(int collectionId)
-        {
-            var collection = await _context.collections
-                .Include(c => c.CustomFields)
-                .FirstOrDefaultAsync(x => x.Id == collectionId);
-            return View(collection);
-        }
-
-        private bool CollectionExists(int id)
-        {
-            return _context.collections.Any(e => e.Id == id);
-        }
-
-        [HttpPost("customfields/add")]
-        public async Task<IActionResult> AddCustomField([FromBody] CustomField customField) {
-            var existing = await _context.customFields
-               .FirstOrDefaultAsync(
-                    c => c.CollectionId == customField.CollectionId && 
-                    c.Name == customField.Name && 
-                    c.Type == customField.Type
-                );
-
-            if(existing != null)
-            {
-                return BadRequest("Field already exist");
-            }
-
-            await _context.customFields.AddAsync(customField);
-            await _context.SaveChangesAsync();
-            return Ok(new {Id = customField.Id});
-        }
-
-        [HttpDelete("customfields/delete/{id}")]
-        public async Task<IActionResult> DeleteCustomField(int Id)
+        [HttpGet("/items/{itemId}/isliked")]
+        public IActionResult IsUserLiked(int? itemId)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var deletePermisible = _context.collections
-                .Any(c => c.UserId == userId && c.CustomFields.Any(cf => cf.Id == Id));
-
-            if(!deletePermisible)
+            if(userId == null || itemId == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-            var field = await _context.customFields.FindAsync(Id);
 
-            _context.customFields.Remove(field);
-            await _context.SaveChangesAsync();
-            return Ok(new { Id = field.Id });
+            var isLiked = _itemRepository.IsUserLikedAsync(itemId.Value, userId);
+            return Ok(isLiked);
         }
+
+        [HttpPost("items/comment")]
+        public async Task<IActionResult> Comment([FromBody] CommentModel comment)
+        {
+
+            var commentEntity = _mapper.Map<Comment>(comment);
+            commentEntity.CreatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _itemRepository.AddCommentAsync(commentEntity);
+                await _itemRepository.SaveAsync();
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return Ok(await _itemRepository.GetCommentAsync(commentEntity.Id));
+        }
+
+        
+
+
     }
 }

@@ -3,7 +3,7 @@
 @if(_singInManager.IsSignedIn(User))
 {
     <div>
-        <a class="nav-link d-inline" asp-controller="Account" asp-action="Profile">@User.Identity.Name</a>|
+        <a class="nav-link d-inline" asp-controller="Profile" asp-action="MyProfile">@User.Identity.Name</a>|
         <a class="nav-link text-dark d-inline" asp-controller="Account" asp-action="SignOut">Logout</a>
     </div>
 }

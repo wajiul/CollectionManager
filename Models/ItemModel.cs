@@ -13,7 +13,7 @@ namespace CollectionManager.Models
 
     public class ItemWithReactionModel : ItemViewModel
     {
-        public List<LikeModel> Likes { get; set; } = new List<LikeModel>();
+        public int Likes { get; set; }
         public List<CommentModel> Comments { get; set; } = new List<CommentModel>();
     }
 

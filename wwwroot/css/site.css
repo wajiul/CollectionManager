@@ -27,3 +27,33 @@ body {
   font-size: 12px;
   font-weight: 300;
 }
+
+
+/* Comment section  */
+.comment-date {
+  font-size: 12px;
+}
+.comment-text {
+  font-size: 14px;
+}
+
+.shadow-none {
+  box-shadow: none;
+}
+.comment-name {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.comment-input {
+  resize: none;
+}
+.like-comment .btn {
+    font-weight: 600;
+    color: #464444;
+}
+
+.like-comment .btn:hover {
+    background-color: rgba(169, 169, 169, 0.53);
+}
