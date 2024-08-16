@@ -46,10 +46,12 @@
           </div>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-sm-2" type="search" placeholder="Search">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-      </form>
+
+        <form asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm" style="width: 15rem;">
+            <input type="text" name="query" class="form-control shadow-none" placeholder="Search">
+            <button class="input-group-text"><i class="bi bi-search"></i></button>
+        </form>
+
       <div class="ms-md-4">
         <partial name="_signInAndOut"/>
       </div>

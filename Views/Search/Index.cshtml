@@ -1,24 +1,90 @@
 ﻿@model SearchResultModel
-<h2 class="text-center text-primary">Search Result</h2>
-<div class="container">
-    @foreach(var item in @Model.Items) {
-        <div class="bg-light p-4 mb-2">
-            <span class="text-info me-4">[item]</span>
-            <a 
-                asp-controller="collections" 
-                asp-action="Items" 
-                asp-route-id="@item.Id"  
-                class="text-truncate"
-                >@item.Name</a>
-            <a>(visit collection)</a>
-        </div>
-    }
+<h2 class="text-center text-primary mb-3">Search Result</h2>
 
-    @foreach(var collection in @Model.Collections) {
-        <div class="bg-light p-4 mb-2">
-            <span class="text-info me-4">[collection]</span>
-            <a asp-controller="Collections"
-               asp-action="Items" asp-route-id="@collection.Id" class="text-truncate">@collection.Name</a>
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        @if(Model.Items.Count == 0 && Model.Collections.Count == 0)
+        {
+            <div class="d-flex justify-content-center align-items-center" style="height:80vh;">
+                <h3 class="text-dark">No result found</h3>
+            </div>
+        }
+        <div class="col-md-9">
+            @foreach(var item in Model.Items)
+            {
+                <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
+                    <div class="card-body p-2">
+                        <div class="text-warning" style="font-size:12px;">[Item]</div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Name:</span>
+                                <a asp-action="Items"
+                                   asp-controller="Collections"
+                                   asp-route-collectionId="@item.CollectionId"
+                                   asp-route-id="@item.Id">
+                                   @item.Name
+                                </a>
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Collection:</span>
+                                <a asp-action="Collection"
+                                   asp-controller="Collections"
+                                   asp-route-id="@item.CollectionId">
+                                    @item.CollectionName
+                                </a>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Like:</span>
+                                @item.LikeCount
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Comment:</span>
+                                @item.CommentCount
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+           
+            @foreach(var collection in Model.Collections)
+            {
+                <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
+                    <div class="card-body p-2">
+                        <div class="text-warning" style="font-size:12px;">[Collection]</div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Name:</span>
+                                <a asp-action="Collection"
+                                   asp-controller="Collections"
+                                   asp-route-id="@collection.Id">
+                                   @collection.Name
+                                </a>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Description:</span>
+                                @collection.Description
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-black-50 text-truncate mb-0">
+                                <span class="text-info me-1">Item:</span>
+                                @collection.ItemCount
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+
         </div>
-    }
+    </div>
 </div>
+

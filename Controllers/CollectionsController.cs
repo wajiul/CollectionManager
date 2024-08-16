@@ -13,6 +13,7 @@ using CollectionManager.Enums;
 using System.Security.Claims;
 using CollectionManager.Data_Access.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace CollectionManager.Controllers
 {
@@ -96,6 +97,8 @@ namespace CollectionManager.Controllers
         [HttpPost("items/comment")]
         public async Task<IActionResult> Comment([FromBody] CommentModel comment)
         {
+            
+
 
             var commentEntity = _mapper.Map<Comment>(comment);
             commentEntity.CreatedAt = DateTime.UtcNow;

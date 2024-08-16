@@ -36,6 +36,9 @@ namespace CollectionManager.Controllers
                      Id = i.Id,
                      Name = i.Name,
                      CollectionId = i.CollectionId,
+                     CollectionName = i.Collection.Name,
+                     LikeCount = i.Likes.Count,
+                     CommentCount = i.Comments.Count
                  })
                  .ToList();
 
@@ -46,7 +49,8 @@ namespace CollectionManager.Controllers
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    Description = c.Description
+                    Description = c.Description,
+                    ItemCount = c.Items.Count
                 })
                 .ToList();
 
