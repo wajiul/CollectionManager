@@ -11,6 +11,11 @@ namespace CollectionManager.Models
         public List<CustomFieldValueModel> FieldValues { get; set; } = new List<CustomFieldValueModel>();
     }
 
+    public class ItemWithCreationDateModel: ItemModel
+    {
+        public string CreatedAt { get; set; } = string.Empty;
+    }
+
     public class ItemWithReactionModel : ItemViewModel
     {
         public int Likes { get; set; }

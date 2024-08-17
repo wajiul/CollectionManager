@@ -3,6 +3,7 @@ using System;
 using CollectionManager.Data_Access;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -12,9 +13,11 @@ using NpgsqlTypes;
 namespace CollectionManager.Migrations
 {
     [DbContext(typeof(CollectionMangerDbContext))]
-    partial class CollectionMangerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240817030509_add_item_creation_date")]
+    partial class add_item_creation_date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

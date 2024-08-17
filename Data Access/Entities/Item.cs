@@ -14,7 +14,7 @@ namespace CollectionManager.Data_Access.Entities
 
         public ICollection<Comment> Comments { get; set; }  = new List<Comment>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();
-
+        public DateTime CreatedAt { get; set; }
         public NpgsqlTsVector search_vector { get; set; }
 
     }

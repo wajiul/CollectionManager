@@ -63,6 +63,32 @@ namespace CollectionManager.Data_Access.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);  
         }
 
+        public async Task<IEnumerable<ItemWithCreationDateModel>> GetRecentlyAddedItemAsync()
+        {
+            return await _context.items
+                .OrderByDescending(i => i.CreatedAt)
+                .Select(i => new ItemWithCreationDateModel
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    CreatedAt = i.CreatedAt.ToString("MMMM yyyy"),
+                    CollectionId = i.CollectionId,
+                })
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TagModel>> GetTagCloudAsync()
+        {
+            return await _context.tags
+                .Select(t => new TagModel
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                })
+                .ToListAsync();
+        }
+
         public bool IsUserLikedAsync(int itemId, string userId)
         {
             return  _context.likes.Any(x => x.ItemId == itemId && x.UserId == userId);

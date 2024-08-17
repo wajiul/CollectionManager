@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ItemWithCreationDateModel>
+
+<h1 class="text-primary text-center">Recently added items</h1>
+<div>
+    @foreach(var item in @Model)
+    {
+        <p>@item.CreatedAt  - @item.Name</p>
+    }
+</div>

@@ -115,6 +115,14 @@ namespace CollectionManager.Data_Access.Repositories
                 .FirstOrDefaultAsync(x => x.Id == Id);
         }
 
+        public async Task<IEnumerable<Collection>> GetTopLargestCollectionsAsync()
+        {
+            return await _context.collections
+                .OrderByDescending(c => c.Items.Count)
+                .Take(5)
+                .ToListAsync();
+        }
+
         public bool IsCollectionExist(int Id)
         {
             return _context.collections.Any(c => c.Id == Id);

@@ -103,6 +103,8 @@ namespace CollectionManager.Controllers
             if (ModelState.IsValid)
             {
                 var item = _mapper.Map<Item>(newItem);
+                item.CreatedAt = DateTime.UtcNow;
+
                 await _context.items.AddAsync(item);
                 await _context.SaveChangesAsync();
 
