@@ -1,0 +1,50 @@
+﻿@model List<UserWithSelectFlagModel> 
+
+<div class="container">
+    <form asp-action="PerformAdminAction" method="post">
+        <div class="mb-2">
+            <button class="btn btn-primary" type="submit" name="operation" value="block">Block</button>
+            <button class="btn btn-primary" type="submit" name="operation" value="unblock">Unblock</button>
+            <button class="btn btn-danger" type="submit" name="operation" value="delete">Delete</button>
+            <button class="btn btn-primary" type="submit" name="operation" value="add_to_admin">Add to admin</button>
+            <button class="btn btn-primary" type="submit" name="operation" value="remove_from_admin">Remove from admin</button>
+
+        </div>
+        <table class="table table-striped text-center">
+        <thead>
+            <tr>
+                <td>
+                    <input class="form-check" type="checkbox"/>
+                </td>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Is Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(int i = 0;i < @Model.Count;i++) {
+                <div>
+                    <input asp-for="@Model[i].Id" value="@Model[i].Id" hidden/>
+                    <input asp-for="@Model[i].Name" value="@Model[i].Name" hidden/>
+                    <input asp-for="@Model[i].Email" value="@Model[i].Email" hidden />
+                    <input asp-for="@Model[i].Status" value="@Model[i].Status" hidden />
+                    <input asp-for="@Model[i].IsAdmin" value="@Model[i].IsAdmin" hidden />
+                </div>
+                <tr>
+                    <td>
+                        <input asp-for="@Model[i].IsSelected" type="checkbox" class="form-check"/>
+                    </td>
+                    <td>@Model[i].Id</td>
+                    <td>@Model[i].Name</td>
+                    <td>@Model[i].Email</td>
+                    <td>@Model[i].Status</td>
+                    <td>@Model[i].IsAdmin</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+        
+    </form>
+</div>

@@ -77,7 +77,6 @@ namespace CollectionManager.Controllers
                 LastName = signUpData.LastName,
                 Email = signUpData.Email,
                 UserName = signUpData.Email,
-                IsAdmin = false,
                 Status = UserStatus.Active
             };
 
