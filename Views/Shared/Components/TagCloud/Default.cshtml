@@ -1,0 +1,15 @@
+﻿@model IEnumerable<TagModel>
+
+<div class="container">
+    <h1 class="text-primary text-center">Tag cloud</h1>
+    <div class="d-flex row justify-content-center">
+        <div class="col-md-10 text-center">
+            <div>
+                @foreach(var tag in @Model)
+                {
+                    <a href="#" class="badge bg-dark rounded-pill me-1">@tag.Name</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
