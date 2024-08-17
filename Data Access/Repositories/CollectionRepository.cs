@@ -115,10 +115,18 @@ namespace CollectionManager.Data_Access.Repositories
                 .FirstOrDefaultAsync(x => x.Id == Id);
         }
 
-        public async Task<IEnumerable<Collection>> GetTopLargestCollectionsAsync()
+        public async Task<IEnumerable<CollectionWithAuthorModel>> GetTopLargestCollectionsAsync()
         {
             return await _context.collections
                 .OrderByDescending(c => c.Items.Count)
+                .Select(c => new CollectionWithAuthorModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    UserId = c.UserId,
+                    Author = string.Concat(c.User.FirstName, ' ', c.User.LastName)
+                })
                 .Take(5)
                 .ToListAsync();
         }

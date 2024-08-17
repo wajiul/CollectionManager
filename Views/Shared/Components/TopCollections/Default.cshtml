@@ -1,0 +1,9 @@
+﻿@model IEnumerable<CollectionWithAuthorModel>
+<h1 class="text-primary text-center">Top 5 largest collections</h1>
+
+<div>
+     @foreach(var collection in @Model)
+     {
+         <p>@collection.Name - @collection.Author</p>
+     }
+</div>

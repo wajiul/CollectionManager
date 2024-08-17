@@ -16,6 +16,12 @@ namespace CollectionManager.Models
         [Required]
         public string UserId { get; set; } = string.Empty;
     }
+
+    public class CollectionWithAuthorModel: CollectionModel
+    {
+        public string Author { get; set; } = string.Empty;
+    }
+   
     public class CollectionWithItemsModel: CollectionModel
     {
         public ICollection<ItemModel> Items { get; set; } = new List<ItemModel>();
