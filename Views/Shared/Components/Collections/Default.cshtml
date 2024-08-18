@@ -3,6 +3,7 @@
 @{
     bool actionPermitted = (bool)ViewData["Action"];
     bool displayAuthor = (bool)ViewData["DisplayAuthor"];
+    bool isAdmin = (bool)ViewData["IsAdmin"];
 }
 <div class="container">
     <div class="d-flex justify-content-center row mt-3">
@@ -36,10 +37,16 @@
                         </td>
                     }
 
-                    @if(actionPermitted)
+                    @if(isAdmin)
                     {
                         <td>
-                             <partial name="_CollectionActionPartial" model="@collection.Id" />
+                             <partial name="_AdminCollectionActionPartial" model="new {collectionId = collection.Id, userId = collection.UserId}" />
+                        </td>
+                    }
+                    else if(actionPermitted)
+                    {
+                        <td>
+                            <partial name="_CollectionActionPartial" model="@collection.Id" />
                         </td>
                     }
                     else

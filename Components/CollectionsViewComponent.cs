@@ -12,11 +12,12 @@ namespace CollectionManager.Components
         {
             _collectionRepository = collectionRepository;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string? userId, bool displayAction = false, bool displayAuthor = true)
+        public async Task<IViewComponentResult> InvokeAsync(string? userId, bool displayAction = false, bool displayAuthor = true, bool isAdmin = false)
         {
 
             ViewData["Action"] = displayAction;
             ViewData["DisplayAuthor"] = displayAuthor;
+            ViewData["IsAdmin"] = isAdmin;
 
             if (userId == null)
             {

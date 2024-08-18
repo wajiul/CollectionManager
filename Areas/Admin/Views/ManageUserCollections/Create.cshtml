@@ -1,0 +1,84 @@
+﻿@model CollectionModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2 class="text-primary text-center">Create Collection</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col col-md-8">
+            <form asp-action="Create" method="post" id="collectionForm">
+                <div class="mb-2">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control form-control-sm" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" name="Description" class="form-control form-control-sm" required> </textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Category" class="control-label"></label>
+                    <input asp-for="Category" class="form-control form-control-sm" required />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="ImageUrl" class="control-label"></label>
+                    <input asp-for="ImageUrl" class="form-control form-control-sm" required />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="UserId" class="control-label"></label>
+                    <input asp-for="UserId" class="form-control form-control-sm" value="@Model.UserId" required />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <input type="submit" class="btn btn-primary px-4" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#collectionForm').validate({
+
+                errorPlacement: function (error, element) {
+                    let formGroup = element.closest('.form-group');
+                    formGroup.addClass('has-error').removeClass('has-success');
+                    element.addClass('is-invalid').removeClass('is-valid');
+                },
+
+                success: function (label, element) {
+                    let formGroup = $(element).closest('.form-group');
+                    formGroup.addClass('has-success').removeClass('has-error');
+                    $(element).removeClass('is-invalid').addClass('is-valid');
+                },
+
+                onkeyup: function (element) {
+                    $(element).valid();
+                },
+                onfocusout: function (element) {
+                    console.log('focus', element);
+                    $(element).valid();
+                },
+
+            });
+        });
+
+    </script>
+}
+
+
+
