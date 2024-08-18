@@ -19,12 +19,7 @@ namespace CollectionManager.Mapping
             CreateMap<ItemModel, Item>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.CollectionId, opt => opt.MapFrom(src => src.CollectionId))
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>
-                    JsonConvert.DeserializeObject<List<TagValue>>(src.Tags).Select(t => new Tag
-                    {
-                        Name = t.Value
-                    }).ToList()
-                ))
+                .ForMember(dest => dest.Tags, opt => opt.Ignore())
                 .ForMember(dest => dest.FieldValues, opt => opt.MapFrom(src =>
                     src.FieldValues.Select(c => new CustomFieldValue
                     {

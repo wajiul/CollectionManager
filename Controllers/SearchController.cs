@@ -1,4 +1,5 @@
 ﻿using CollectionManager.Data_Access;
+using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,12 @@ namespace CollectionManager.Controllers
     public class SearchController : Controller
     {
         private readonly CollectionMangerDbContext _context;
+        private readonly ItemRepository _itemRepository;
 
-        public SearchController(CollectionMangerDbContext context)
+        public SearchController(CollectionMangerDbContext context, ItemRepository itemRepository)
         {
             _context = context;
+            _itemRepository = itemRepository;
         }
         public IActionResult Index(string query)
         {
@@ -63,5 +66,11 @@ namespace CollectionManager.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SearchByTag(int tagId)
+        {
+            var items = await _itemRepository.GetItemsByTagAsync(tagId);
+            return View(items);
+        }
     }
 }

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MatchedItemModel>
+
+<div class="container">
+    <div class="d-flex justify-content-center row">
+
+          <div class="col-md-9">
+                @foreach (var item in Model)
+                {
+                    <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
+                        <div class="card-body p-2">
+                            <div class="text-warning" style="font-size:12px;">[Item]</div>
+                            <div>
+                                <p class="text-black-50 text-truncate mb-0">
+                                    <span class="text-info me-1">Name:</span>
+                                    <a asp-action="Items"
+                                       asp-controller="Collections"
+                                       asp-route-collectionId="@item.CollectionId"
+                                       asp-route-id="@item.Id">
+                                        @item.Name
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-black-50 text-truncate mb-0">
+                                    <span class="text-info me-1">Collection:</span>
+                                    <a asp-action="Collection"
+                                       asp-controller="Collections"
+                                       asp-route-id="@item.CollectionId">
+                                        @item.CollectionName
+                                    </a>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-black-50 text-truncate mb-0">
+                                    <span class="text-info me-1">Like:</span>
+                                    @item.LikeCount
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-black-50 text-truncate mb-0">
+                                    <span class="text-info me-1">Comment:</span>
+                                    @item.CommentCount
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+          </div>
+    </div>
+</div>
+

@@ -62,6 +62,35 @@ namespace CollectionManager.Data_Access.Repositories
                     .ThenInclude(c => c.CustomField)
                 .FirstOrDefaultAsync(x => x.Id == id);  
         }
+        public async Task<IEnumerable<MatchedItemModel>> GetItemsByTagAsync(int tagId)
+        {
+            var tag = await _context.tags
+                 .Where(t => t.Id == tagId)
+                 .Include(t => t.Items)
+                     .ThenInclude(c => c.Collection)
+                 .Include(t => t.Items)
+                     .ThenInclude(t => t.Likes)
+                 .Include(t => t.Items)
+                     .ThenInclude(t => t.Comments)
+                 .FirstOrDefaultAsync();
+
+           
+            var itemModels = new List<MatchedItemModel>();
+            foreach (var item in tag.Items)
+            {
+                var newItem = new MatchedItemModel
+                {
+                    Id= item.Id,
+                    Name= item.Name,
+                    CollectionId = item.CollectionId,
+                    CollectionName = item.Collection.Name,
+                    LikeCount = item.Likes.Count,
+                    CommentCount = item.Comments.Count
+                };
+                itemModels.Add(newItem);
+            }
+            return itemModels;
+        } 
 
         public async Task AddItemAsync(Item item)
         {

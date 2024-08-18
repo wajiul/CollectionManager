@@ -106,8 +106,26 @@ namespace CollectionManager.Controllers
                 item.CreatedAt = DateTime.UtcNow;
 
                 await _context.items.AddAsync(item);
-                await _context.SaveChangesAsync();
 
+                var tags = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags).Select(t => new Tag
+                {
+                    Name = t.Value
+                }).ToList();
+
+                foreach(var tag in tags)
+                {
+                    var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.Name == tag.Name);
+                    if(existingTag != null)
+                    {
+                        item.Tags.Add(existingTag);
+                    }
+                    else
+                    {
+                        item.Tags.Add(tag);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "ProfileCollectionItems", new { collectionId = item.CollectionId });
             }
 

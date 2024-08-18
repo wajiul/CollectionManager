@@ -46,12 +46,17 @@ namespace CollectionManager.Data_Access
                 .IsUnique();
 
             modelBuilder.Entity<Item>()
-            .Property(i => i.search_vector)
-            .HasColumnType("tsvector");
+                .Property(i => i.search_vector)
+                .HasColumnType("tsvector");
 
             modelBuilder.Entity<Collection>()
-            .Property(i => i.search_vector)
-            .HasColumnType("tsvector");
+                .Property(i => i.search_vector)
+                .HasColumnType("tsvector");
+
+            modelBuilder.Entity<Item>()
+                .HasMany(i => i.Tags)
+                .WithMany(t => t.Items)
+                .UsingEntity(j => j.ToTable("ItemTags"));
 
 
             base.OnModelCreating(modelBuilder);
