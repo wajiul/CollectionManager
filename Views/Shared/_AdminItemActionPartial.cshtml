@@ -1,0 +1,44 @@
+﻿@model dynamic
+
+@{
+    int Id = Model.Id;
+    int CollectionId = Model.CollectionId;
+    string userId = @Model.UserId;
+}
+
+<p>@Id - @CollectionId - @userId</p>
+
+<a asp-action="Items"
+   asp-controller="ManageUserCollectionItems"
+   asp-route-collectionId="@CollectionId"
+   asp-route-id="@Id"
+   asp-route-userId="@userId"
+   asp-area="admin"
+   class="btn btn-sm btn-primary">
+    Details
+</a>
+
+<a asp-action="Edit"
+   asp-controller="ManageUserCollectionItems"
+   asp-route-id="@Id"
+   asp-route-collectionId="@CollectionId"
+   asp-route-userId="@userId"
+   asp-area="admin"
+   class="btn btn-sm btn-primary">
+    Edit
+</a>
+
+<a asp-action="Delete"
+   asp-controller="ManageUserCollectionItems"
+   asp-route-id="@Id"
+   asp-route-collectionId="@CollectionId"
+   asp-route-userId="@userId"
+   asp-area="admin"
+   class="btn btn-sm btn-primary">
+    Delete
+</a>
+
+
+
+
+

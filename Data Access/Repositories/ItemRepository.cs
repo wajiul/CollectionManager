@@ -63,6 +63,10 @@ namespace CollectionManager.Data_Access.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);  
         }
 
+        public async Task AddItemAsync(Item item)
+        {
+            await _context.items.AddAsync(item);
+        }
         public async Task<IEnumerable<ItemWithCreationDateModel>> GetRecentlyAddedItemAsync()
         {
             return await _context.items

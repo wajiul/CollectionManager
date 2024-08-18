@@ -1,5 +1,8 @@
 ﻿@model CollectionWithItemsReactionCountModel
-
+@{
+    bool action = (bool)ViewData["Action"];
+    bool isAdmin = (bool)ViewData["IsAdmin"];
+}
 <div class="container">
     <div class="d-flex justify-content-start row mt-2">
         <div class="col">
@@ -56,8 +59,13 @@
                     </td>
                     <td>@item.Likes</td>
                     <td>@item.Comments</td>
-
-                    @if(ViewData["Action"] != null &&  (bool)ViewData["Action"])
+                    @if(isAdmin) 
+                    {
+                        <td>
+                            <partial name="_AdminItemActionPartial" model="new {Id = item.Id, CollectionId = Model.Id, UserId = Model.UserId}"></partial>
+                        </td>
+                    }
+                    else if(action)
                     {
                         <td>
                             <partial name="_itemsActionPartial" model="new {Id = item.Id, CollectionId = Model.Id }" />

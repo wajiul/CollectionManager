@@ -211,38 +211,5 @@ namespace CollectionManager.Controllers
             return RedirectToAction("Index", new {collectionId = item.CollectionId});
         }
 
-
-        [HttpPost("like")]
-        public async Task<IActionResult> Like([FromBody] LikeModel like)
-        {
-            var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
-            if (liked)
-            {
-                return BadRequest(new { Message = "Already liked" });
-            }
-
-            var likeEntity = _mapper.Map<Like>(like);
-
-            await _itemRepository.AddLikeAsync(likeEntity);
-            await _itemRepository.SaveAsync();
-
-            return Ok(new { Message = "Like added successfully" });
-        }
-
-        [HttpPost("comment")]
-        public async Task<IActionResult> Comment([FromBody] CommentModel comment)
-        {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var commentEntity = _mapper.Map<Comment>(comment); 
-            await _itemRepository.AddCommentAsync(commentEntity);
-            await _itemRepository.SaveAsync();
-
-            return Ok(new { Message = "Comment added successfully" });
-        }
-
     }
 }

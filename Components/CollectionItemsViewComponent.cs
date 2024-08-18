@@ -15,10 +15,11 @@ namespace CollectionManager.Components
             _collectionRepository = collectionRepository;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int collectionId, bool displayAction = false)
+        public async Task<IViewComponentResult> InvokeAsync(int collectionId, bool displayAction = false, bool isAdmin = false)
         {
             var collectionItems = await _collectionRepository.GetCollectionWithItemsReactionCount(collectionId);
             ViewData["Action"] = displayAction;
+            ViewData["IsAdmin"] = isAdmin;
             return View(collectionItems);
         }
     }
