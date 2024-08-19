@@ -1,6 +1,7 @@
 using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
+using CollectionManager.Hubs;
 using CollectionManager.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<Colle
 builder.Services.AddScoped<CollectionRepository>();
 builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -46,5 +48,7 @@ app.MapControllerRoute(
       name: "areas",
       pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
+
+app.MapHub<ReactionHub>("/hubs/reaction");
 
 app.Run();

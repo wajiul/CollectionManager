@@ -92,6 +92,15 @@ namespace CollectionManager.Data_Access.Repositories
             return itemModels;
         } 
 
+        public async Task<int> GetTotalLikeOfItemAsync(int itemId)
+        {
+            return await _context.likes.CountAsync(x => x.ItemId == itemId);
+        } 
+
+        public async Task<int> GetTotalCommentOfItemAsync(int itemId)
+        {
+            return await _context.comments.CountAsync(x => x.ItemId == itemId);
+        }
         public async Task AddItemAsync(Item item)
         {
             await _context.items.AddAsync(item);

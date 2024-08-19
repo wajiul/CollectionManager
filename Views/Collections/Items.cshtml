@@ -10,6 +10,7 @@
 
 
 @section Scripts {
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
     <script>
 
         $(document).ready(function () {
@@ -18,7 +19,71 @@
             var $likeButton = $('#likeButton');
             let likeCount = parseInt($('#likeCount').text());
             let isLiked = false;
-            getLike();
+            getLikeStatus();
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/reaction")
+                .build();
+
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Connected.");
+                } catch (err) {
+                    console.error("Error starting connection: ", err);
+                    setTimeout(startConnection, 5000);
+                }
+            }
+
+            connection.onclose(async () => {
+                await startConnection();
+            });
+            startConnection();
+
+            async function sendLike(like) {
+                try {
+                    await connection.invoke("AddLike", like);
+                }
+                catch (err) {
+                    console.log('error sending like', err);
+                }
+            }
+
+            async function sendComment(comment) {
+                try {
+                    await connection.invoke("AddComment", comment);
+                }
+                catch (err) {
+                    console.log('error sending comment', err);
+                }
+            }
+
+            connection.on("GetItemLikeCount", (cnt) => {
+                console.log('new like', cnt);
+                isLiked = true;
+                $likeButton.addClass('text-info');
+                if (cnt == 1) {
+                    $('#likeCountContainer').removeClass('d-none');
+                }
+                $('#likeCount').text(cnt);
+            });
+
+            connection.on("GetComment", (comment, cnt) => {
+                console.log('new comment', comment);
+                let c = commentUI(comment);
+                $("#commentsContainer").prepend(c);
+
+                if (cnt == 1) {
+                    $('#commentCountContainer').removeClass('d-none');
+                    $('#commentCount').text(cnt + ' comment');
+                }
+                else {
+                    $('#commentCount').text(cnt + ' comments');
+                }
+
+                $commentText.val('');
+                $commentButton.hide();
+            });
 
 
             if (isLiked == true) {
@@ -70,7 +135,7 @@
                 }
             });
 
-            function getLike() {
+            function getLikeStatus() {
                 $.ajax({
                     url: '/items/@itemId/isliked',
                     type: 'GET',
@@ -79,26 +144,15 @@
                         if (response == true) {
                             isLiked = true;
                             $likeButton.addClass('text-info');
-                            console.log('get like', response);
                         }
                     }
                 })
             }
 
             function postLike(like) {
-                console.log(like);
-                $.ajax({
-                    url: '/collections/items/like',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(like),
-                    success: function (response) {
-                        likeCount++;
-                        $('#likeCount').innerText = likeCount;
-                        isLiked = true;
-                        $likeButton.addClass('text-info');
-                    }
-                });
+                if(!isLiked) {
+                    sendLike(like);
+                }
             }
 
             function commentUI(comment) {
@@ -107,7 +161,7 @@
                         <div class="d-flex flex-row user-info">
                         <img
                             class="rounded-circle"
-                            src="https://i.imgur.com/RpzrMR2.jpg"
+                            src="/images/user.jpg"
                             width="35"
                             height="35"
                         />
@@ -127,22 +181,10 @@
             } 
             function postComment(comment) {
                 console.log(comment);
-                $.ajax({
-                    url: '/collections/items/comment',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(comment),
-                    success: function (response) {
-                        console.log(response);
-
-                        var c = commentUI(response);
-                        console.log(c);
-                        $("#commentsContainer").prepend(c);
-                        $commentText.val('');
-                        $commentButton.hide();
-                    }
-                });
+                sendComment(comment);
             }
+
+
         });
 
     </script>
