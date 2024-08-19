@@ -15,46 +15,39 @@
     <header>
    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a  
+        class="navbar-brand" 
+        href="#">
+        CM
+     </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor04" aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarColor04">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" asp-controller="Home" asp-action="Index">Home
-            <span class="visually-hidden">(current)</span>
-          </a>
+          <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" asp-action="Index" asp-controller="Collections">Collections</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Separated link</a>
-          </div>
-        </li>
+  
       </ul>
 
-        <form asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm" style="width: 15rem;">
-            <input type="text" name="query" class="form-control shadow-none" placeholder="Search">
-            <button class="input-group-text"><i class="bi bi-search"></i></button>
-        </form>
+      <form asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm width-25">
+          <input type="text" name="query" class="form-control shadow-none" placeholder="Search">
+          <button class="input-group-text"><i class="bi bi-search"></i></button>
+      </form>
 
-      <div class="ms-md-4">
+      <div class="ms-lg-3 mt-md-2 text-info">
+          <a class="nav-link" asp-action="Index" asp-controller="ManageUsers" asp-area="admin">Admin panel</a>
+      </div>  
+
+      <div class="ms-lg-3 mt-md-2">
         <partial name="_signInAndOut"/>
       </div>
+
     </div>
   </div>
 </nav>

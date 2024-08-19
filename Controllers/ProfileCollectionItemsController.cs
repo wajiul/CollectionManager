@@ -172,7 +172,15 @@ namespace CollectionManager.Controllers
 
                 foreach (var tag in tagsToAdd)
                 {
-                    item.Tags.Add(tag);
+                    var existingTag = await _context.tags.FirstOrDefaultAsync(x => x.Name == tag.Name);
+                    if(existingTag != null)
+                    {
+                        item.Tags.Add(existingTag);
+                    }
+                    else
+                    {
+                        item.Tags.Add(tag);
+                    }
                 }
 
                 foreach (var tag in tagsToRemove)
@@ -227,6 +235,15 @@ namespace CollectionManager.Controllers
             _itemRepository.Delete(item);
             await _itemRepository.SaveAsync();
             return RedirectToAction("Index", new {collectionId = item.CollectionId});
+        }
+
+        [HttpGet]
+        [Route("tags")]
+        public async Task<IActionResult> GetTags()
+        {
+            var tags = await _itemRepository.GetTagsAsync();
+            var tagStringList = tags.Select(x => x.Name).Distinct().ToList();
+            return Ok(tagStringList);
         }
 
     }

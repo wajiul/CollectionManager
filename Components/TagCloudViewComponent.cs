@@ -13,7 +13,7 @@ namespace CollectionManager.Components
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var tags = await _itemRepository.GetTagCloudAsync();
+            var tags = await _itemRepository.GetTagsAsync();
             return View(tags);
         }
     }

@@ -111,7 +111,7 @@ namespace CollectionManager.Data_Access.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<TagModel>> GetTagCloudAsync()
+        public async Task<IEnumerable<TagModel>> GetTagsAsync()
         {
             return await _context.tags
                 .Select(t => new TagModel
