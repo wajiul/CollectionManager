@@ -219,7 +219,7 @@ namespace CollectionManager.Controllers
         }
 
         [HttpGet]
-        [Route("collections/categories")]
+        [Route("/collections/categories")]
         public async Task<IActionResult> GetCollectionCategories()
         {
             var categories = await _collectionRepository.GetCollectionCategoriesAsync();

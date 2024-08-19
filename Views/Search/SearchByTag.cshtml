@@ -1,14 +1,25 @@
 ﻿@model IEnumerable<MatchedItemModel>
 
 <div class="container">
-    <div class="d-flex justify-content-center row">
 
-          <div class="col-md-9">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            @await Component.InvokeAsync("TagCloud")
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center row">
+        @if(!Model.Any())
+        {
+            <h1 class="text-secondary text-center mt-5">No result found</h1>
+        }
+
+        <div class="col-md-9">
                 @foreach (var item in Model)
                 {
                     <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
                         <div class="card-body p-2">
-                            <div class="text-warning" style="font-size:12px;">[Item]</div>
+                            @* <div class="text-warning" style="font-size:12px;">[Item]</div> *@
                             <div>
                                 <p class="text-black-50 text-truncate mb-0">
                                     <span class="text-info me-1">Name:</span>
@@ -31,6 +42,7 @@
                                     </a>
                                 </p>
                             </div>
+
                             <div>
                                 <p class="text-black-50 text-truncate mb-0">
                                     <span class="text-info me-1">Like:</span>

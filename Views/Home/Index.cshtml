@@ -1,11 +1,14 @@
 ﻿
 <div class="container">
-    <h2>This is home page</h2>
-    <h4>View top 5 Collection, most liked, and others</h4>
-
+    <h1 class="text-primary text-center mb-4">Recently Added Items</h1>
     @await Component.InvokeAsync("RecentlyAddedItems")
-
+    <br />
+    <br />
+    <h1 class="text-primary text-center mb-4">Top 5 Largest Collections</h1>
     @await Component.InvokeAsync("TopCollections")
-
+    <br />
+    <br />
+    <h1 class="text-primary text-center mb-4">Tags</h1>
     @await Component.InvokeAsync("TagCloud")
+    <br />
 </div>

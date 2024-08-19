@@ -66,3 +66,21 @@ body {
 .like-comment .btn:hover {
     background-color: rgba(169, 169, 169, 0.53);
 }
+
+
+/*Top collection and item section */
+.top-collections .card {
+    font-size: 15px;
+}
+
+.top-collections .card-description p {
+    font-size: 14px;
+    font-style: italic;
+}
+
+.top-items .card {
+    font-size: 15px;
+}
+.top-items .card-date {
+    font-size: 14px;
+}

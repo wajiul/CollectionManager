@@ -123,10 +123,11 @@ namespace CollectionManager.Data_Access.Repositories
         public async Task<IEnumerable<TagModel>> GetTagsAsync()
         {
             return await _context.tags
-                .Select(t => new TagModel
+                .GroupBy(t => t.Name)
+                .Select(g => new TagModel
                 {
-                    Id = t.Id,
-                    Name = t.Name
+                    Id = g.FirstOrDefault().Id,
+                    Name = g.Key
                 })
                 .ToListAsync();
         }

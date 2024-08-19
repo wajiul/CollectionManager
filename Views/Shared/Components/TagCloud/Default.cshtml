@@ -1,13 +1,12 @@
 ﻿@model IEnumerable<TagModel>
 
 <div class="container">
-    <h1 class="text-primary text-center">Tag cloud</h1>
-    <div class="d-flex row justify-content-center">
+    <div class="d-flex row justify-content-center mb-4">
         <div class="col-md-10 text-center">
             <div>
                 @foreach(var tag in @Model)
                 {
-                    <a href="#" class="badge bg-dark rounded-pill me-1">@tag.Name</a>
+                    <a asp-action="SearchByTag" asp-controller="Search" asp-route-tagId="@tag.Id" class="badge bg-dark rounded-pill text-decoration-none">@tag.Name</a>
                 }
             </div>
         </div>

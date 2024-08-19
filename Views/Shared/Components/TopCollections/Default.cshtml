@@ -1,9 +1,33 @@
 ﻿@model IEnumerable<CollectionWithAuthorModel>
-<h1 class="text-primary text-center">Top 5 largest collections</h1>
 
-<div>
-     @foreach(var collection in @Model)
-     {
-         <p>@collection.Name - @collection.Author</p>
-     }
+<div class="container">
+    <div class="row justify-content-center top-collections">
+        <div class="col-12 col-md-8">
+            @foreach(var collection in @Model)
+            {
+                <div class="card bordered shadow text-secondary mb-2">
+                    <div class="card-body pt-3 pb-2">
+                        <div class="row align-items-center">
+                            <div class="card-name col-md-6">
+                                <a href="#">@collection.Name</a>
+                            </div>
+                            <div class="card-item col-md-3">
+                                23 items
+                            </div>
+                            <div class="card-author col-md-3 d-flex gap-2 align-items-center">
+                                <i class="bi bi-person"></i>
+                                <a href="#">@collection.Author</a>
+                            </div>
+                        </div>
+                        <div class="card-description">
+                            <p class="mb-0 pb-0 mt-2 mt-md-0 text-muted text-truncate">
+                                @collection.Description
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
