@@ -217,5 +217,13 @@ namespace CollectionManager.Controllers
 
             return Ok(new { Id = field.Id });
         }
+
+        [HttpGet]
+        [Route("collections/categories")]
+        public async Task<IActionResult> GetCollectionCategories()
+        {
+            var categories = await _collectionRepository.GetCollectionCategoriesAsync();
+            return Ok(categories);
+        }
     }
 }

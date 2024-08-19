@@ -20,7 +20,7 @@
                 </div>
                 <div class="mb-2">
                     <label asp-for="Category" class="control-label"></label>
-                    <input asp-for="Category" class="form-control form-control-sm" required />
+                    <input asp-for="Category" id="category" class="form-control form-control-sm" required />
                     <span asp-validation-for="Category" class="text-danger"></span>
                 </div>
                 <div class="mb-2">
@@ -48,7 +48,7 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -74,6 +74,36 @@
                     $(element).valid();
                 },
 
+            });
+
+            var availableCategories = [];
+
+            function getCategories() {
+                $.ajax({
+                    url: 'collections/categories',
+                    contentType: 'application/json',
+                    method: 'GET',
+                    success: function (response) {
+                        availableCategories = response;
+                    }
+                });
+            }
+
+            getCategories();
+
+            $("#category").autocomplete({
+                source: function (request, response) {
+                    var results = $.ui.autocomplete.filter(availableCategories, request.term);
+                    if (request.term.length === 0) {
+                        response(availableCategories.slice(0, 5));
+                    } else {
+                        response(results.slice(0, 10));
+                    }
+                },
+                autoFocus: true,
+                minLength: 0
+            }).focus(function () {
+                $(this).autocomplete("search", "");
             });
         });
 

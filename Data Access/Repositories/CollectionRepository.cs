@@ -104,6 +104,11 @@ namespace CollectionManager.Data_Access.Repositories
             return await _context.collections.FindAsync(Id);
         }
 
+        public async Task<List<string>> GetCollectionCategoriesAsync()
+        {
+            return await _context.collections.Select(c => c.Category).Distinct().ToListAsync();
+        }
+
         public async Task<CustomField?> GetCustomFieldAsync(int Id)
         {
             return await _context.customFields.FindAsync(Id);
