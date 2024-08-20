@@ -6,7 +6,6 @@
     string userId = @Model.UserId;
 }
 
-<p>@Id - @CollectionId - @userId</p>
 
 <a asp-action="Items"
    asp-controller="ManageUserCollectionItems"
@@ -14,7 +13,7 @@
    asp-route-id="@Id"
    asp-route-userId="@userId"
    asp-area="admin"
-   class="btn btn-sm btn-primary">
+   class="btn btn-sm btn-outline-info">
     Details
 </a>
 
@@ -24,7 +23,7 @@
    asp-route-collectionId="@CollectionId"
    asp-route-userId="@userId"
    asp-area="admin"
-   class="btn btn-sm btn-primary">
+   class="btn btn-sm btn-outline-secondary">
     Edit
 </a>
 
@@ -34,7 +33,7 @@
    asp-route-collectionId="@CollectionId"
    asp-route-userId="@userId"
    asp-area="admin"
-   class="btn btn-sm btn-primary">
+   class="btn btn-sm btn-outline-danger">
     Delete
 </a>
 

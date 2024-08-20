@@ -162,9 +162,13 @@ namespace CollectionManager.Data_Access.Repositories
             await _context.comments.AddAsync(comment);
         }
 
-        public void Delete(Item item)
+        public async Task Delete(int id)
         {
-            _context.items.Remove(item);
+            var item = await _context.items.FindAsync(id);
+            if (item != null)
+            {
+                _context.items.Remove(item);
+            }
         }
 
         public async Task SaveAsync()

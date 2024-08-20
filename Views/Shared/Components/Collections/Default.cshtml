@@ -6,20 +6,23 @@
     bool isAdmin = (bool)ViewData["IsAdmin"];
 }
 <div class="container">
-    <div class="d-flex justify-content-center row mt-3">
-        <div class="col card shadow p-0 min_width-567">
+    <div class="d-flex justify-content-center row mt-3 min_width-567">
+        <div class="col card shadow p-0" >
             <div class="card-header bg-primary text-white text-center">
                 <h1>Collections</h1>
             </div>
             <div class="card-body">
-                 <table class="table table-striped text-center" style="font-size:15px;">
+                 <table class="table table-striped text-center w-100" style="font-size:15px;">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Category</th>
                 <th>Items</th>
-                <th>Author</th>
+                @if(displayAuthor)
+                {
+                    <th>Author</th>
+                }
             </tr>
         </thead>
         <tbody>

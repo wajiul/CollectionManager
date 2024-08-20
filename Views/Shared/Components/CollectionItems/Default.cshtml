@@ -2,6 +2,7 @@
 @{
     bool action = (bool)ViewData["Action"];
     bool isAdmin = (bool)ViewData["IsAdmin"];
+    string userId = (string)ViewData["UserId"];
 }
 <div class="container">
     <div class="d-flex justify-content-start row mt-2">
@@ -24,6 +25,24 @@
         </div>
     </div>
 
+    <div>
+        @if(isAdmin && !string.IsNullOrEmpty(userId))
+        {
+            <a 
+                asp-action="Create" 
+                asp-controller="ManageUserCollectionItems" 
+                asp-route-collectionId="@Model.Id"
+                asp-route-userId="@userId"
+                class="btn btn-primary px-4 mb-2">
+                Add Item
+            </a>
+
+        }
+        else if(action)
+        {
+            <a asp-action="Create" asp-controller="ProfileCollectionItems" class="btn btn-primary px-4 mb-2">Add Item</a>
+        }
+    </div>
     <div class="card shadow min_width-567">
         <div class="card-header bg-primary text-white">
             <h1 class="text-center">Items</h1>

@@ -8,6 +8,7 @@ using NuGet.Packaging.Signing;
 
 namespace CollectionManager.Controllers
 {
+    [Route("search")]
     public class SearchController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -18,6 +19,7 @@ namespace CollectionManager.Controllers
             _context = context;
             _itemRepository = itemRepository;
         }
+        [HttpGet("")]
         public IActionResult Index(string query)
         {
             if (string.IsNullOrEmpty(query))
@@ -66,7 +68,7 @@ namespace CollectionManager.Controllers
             return View(viewModel);
         }
 
-        [HttpGet]
+        [HttpGet("tag/{tagId}")]
         public async Task<IActionResult> SearchByTag(int tagId)
         {
             var items = await _itemRepository.GetItemsByTagAsync(tagId);

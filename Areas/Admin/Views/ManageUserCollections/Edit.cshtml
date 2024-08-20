@@ -3,39 +3,53 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Create Collection</h2>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="collectionForm">
-                <div class="mb-2">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control form-control-sm" value="@Model.Name" required />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="text-center">Update Collection</h1>
                 </div>
-                <div class="mb-2">
-                    <label asp-for="Description" class="control-label"></label>
-                    <textarea asp-for="Description" name="Description" class="form-control form-control-sm" value="@Model.Description" required> </textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label asp-for="Category" class="control-label"></label>
-                    <input asp-for="Category" class="form-control form-control-sm" value="@Model.Category" required />
-                    <span asp-validation-for="Category" class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label asp-for="ImageUrl" class="control-label"></label>
-                    <input asp-for="ImageUrl" class="form-control form-control-sm" value="@Model.ImageUrl" required />
-                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label asp-for="UserId" class="control-label"></label>
-                    <input asp-for="UserId" class="form-control form-control-sm" readonly />
-                    <span asp-validation-for="UserId" class="text-danger"></span>
-                </div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="collectionForm">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-2">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control form-control-sm" value="@Model.Name" required />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <textarea asp-for="Description" name="Description" class="form-control form-control-sm" value="@Model.Description" required> </textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <label asp-for="Category" class="control-label"></label>
+                                    <input asp-for="Category" id="category" class="form-control form-control-sm" value="@Model.Category" required />
+                                    <span asp-validation-for="Category" class="text-danger"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <label asp-for="ImageUrl" class="control-label"></label>
+                                    <input asp-for="ImageUrl" class="form-control form-control-sm" value="@Model.ImageUrl" required />
+                                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <label asp-for="UserId" class="control-label"></label>
+                                    <input asp-for="UserId" class="form-control form-control-sm" readonly />
+                                    <span asp-validation-for="UserId" class="text-danger"></span>
+                                </div>
 
-                <input type="submit" class="btn btn-primary">
-            </form>
+                                <div class="d-flex flex-column flex-sm-row gap-1 justify-content-center align-items-center">
+                                    <button type="submit" class="btn btn-primary w-50">Submit</button>
+                                    <a asp-action="Index" asp-controller="ManageUserCollections" asp-route-userId="@Model.UserId" class="btn btn-dark w-50">Back To List</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -46,6 +60,7 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -72,6 +87,37 @@
                 },
 
             });
+
+            var availableCategories = [];
+
+            function getCategories() {
+                $.ajax({
+                    url: '/collections/categories',
+                    contentType: 'application/json',
+                    method: 'GET',
+                    success: function (response) {
+                        availableCategories = response;
+                    }
+                });
+            }
+
+            getCategories();
+
+            $("#category").autocomplete({
+                source: function (request, response) {
+                    var results = $.ui.autocomplete.filter(availableCategories, request.term);
+                    if (request.term.length === 0) {
+                        response(availableCategories.slice(0, 5));
+                    } else {
+                        response(results.slice(0, 10));
+                    }
+                },
+                autoFocus: true,
+                minLength: 0
+            }).focus(function () {
+                $(this).autocomplete("search", "");
+            });
+
         });
     </script>
 }

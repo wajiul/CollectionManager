@@ -126,6 +126,10 @@ namespace CollectionManager.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+
+                TempData["ToastrMessage"] = "Item created successfully";
+                TempData["ToastrType"] = "success";
+
                 return RedirectToAction("Index", "ProfileCollectionItems", new { collectionId = item.CollectionId });
             }
 
@@ -206,6 +210,9 @@ namespace CollectionManager.Controllers
 
                 await _context.SaveChangesAsync();
 
+                TempData["ToastrMessage"] = "Item updated successfully";
+                TempData["ToastrType"] = "success";
+
                 return RedirectToAction("Items", "ProfileCollectionItems", new { id = item.Id, collectionId = item.CollectionId});
             }
 
@@ -232,8 +239,12 @@ namespace CollectionManager.Controllers
             {
                 return NotFound();
             }
-            _itemRepository.Delete(item);
+            await _itemRepository.Delete(id);
             await _itemRepository.SaveAsync();
+
+            TempData["ToastrMessage"] = "Item deleted successfully";
+            TempData["ToastrType"] = "success";
+
             return RedirectToAction("Index", new {collectionId = item.CollectionId});
         }
 

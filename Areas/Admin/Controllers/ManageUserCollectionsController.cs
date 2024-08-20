@@ -62,14 +62,35 @@ namespace CollectionManager.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var collectionEntity = _mapper.Map<Collection>(collectionModel);
-                await _collectionRepository.CreateCollectionAsync(collectionEntity);
-                await _collectionRepository.SaveAsync();
+                try
+                {
+                    var collectionEntity = _mapper.Map<Collection>(collectionModel);
+                    await _collectionRepository.CreateCollectionAsync(collectionEntity);
+                    await _collectionRepository.SaveAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("duplicate key"))
+                    {
+                        ModelState.AddModelError("","Collection already exist.");
+                        return View(collectionModel);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    TempData["ToastrMessage"] = "An error occured inserting collection";
+                    TempData["ToastrType"] = "error";
+                    return View(collectionModel);
+                }
 
                 TempData["ToastrMessage"] = "Collection created successfully";
                 TempData["ToastrType"] = "success";
 
-                return RedirectToAction("Index", "ManageUserCollections");
+                return RedirectToAction("Index", "ManageUserCollections", new {userId = collectionModel.UserId});
             }
             return View(collectionModel);
         }
@@ -116,18 +137,29 @@ namespace CollectionManager.Areas.Admin.Controllers
 
                     await _collectionRepository.SaveAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException ex)
                 {
-                    if (!CollectionExists(collectionModel.Id))
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("duplicate key"))
                     {
-                        return NotFound();
+                        ModelState.AddModelError("", "Collection already exist.");
+                        return View(collectionModel);
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "ProfileCollections");
+                catch (Exception)
+                {
+                    TempData["ToastrMessage"] = "An error occured updating collection";
+                    TempData["ToastrType"] = "error";
+                    return View(collectionModel);
+                }
+
+                TempData["ToastrMessage"] = "Successfully updated collection";
+                TempData["ToastrType"] = "success";
+
+                return RedirectToAction("Index", "ManageUserCollections", new {userId = collectionModel.UserId});
             }
             return View(collectionModel);
         }
@@ -153,6 +185,7 @@ namespace CollectionManager.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+
             if (collection == null)
             {
                 return NotFound();
@@ -161,7 +194,12 @@ namespace CollectionManager.Areas.Admin.Controllers
             _collectionRepository.DeleteCollection(collection);
             await _collectionRepository.SaveAsync();
 
-            return RedirectToAction("Index");
+            TempData["ToastrMessage"] = "Successfully deleted collection";
+            TempData["ToastrType"] = "success";
+
+            var userId = RouteData.Values["userId"].ToString();
+
+            return RedirectToAction("Index", new {userId = userId});
         }
 
         [HttpGet("{collectionId}/customfields")]

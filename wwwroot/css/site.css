@@ -17,10 +17,12 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+footer {
+    height: 50px;
 }
-
+footer #developer{
+    font-size: 14px;
+}
 
 .error-message {
   color:rgb(231, 87, 87);
@@ -84,3 +86,26 @@ body {
 .top-items .card-date {
     font-size: 14px;
 }
+
+/*user datatable */
+#userList_filter {
+    float:right;
+    margin-bottom: 8px;
+}
+#userList_filter input {
+    width: 15rem;
+    padding:3px;
+    box-shadow: none;
+    border: 1px solid gray;
+    border-radius: 5px;
+    outline: none;
+}
+
+
+
+/*Admin panel section */
+.isAdmin {
+    color:limegreen;
+    font-size:20px;
+}
+

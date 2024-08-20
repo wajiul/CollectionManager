@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace CollectionManager.Areas.Admin.Controllers
@@ -14,12 +16,14 @@ namespace CollectionManager.Areas.Admin.Controllers
         private readonly CollectionRepository _collectionRepository;
         private readonly ItemRepository _itemRepository;
         private readonly IMapper _mapper;
+        private readonly CollectionMangerDbContext _context;
 
-        public ManageUserCollectionItemsController(CollectionRepository collectionRepository, ItemRepository itemRepository, IMapper mapper)
+        public ManageUserCollectionItemsController(CollectionRepository collectionRepository, ItemRepository itemRepository, IMapper mapper, CollectionMangerDbContext context)
         {
             _collectionRepository = collectionRepository;
             _itemRepository = itemRepository;
             _mapper = mapper;
+            _context = context;
         }
         [HttpGet("")]
         public IActionResult Index(int collectionId, string userId)
@@ -29,6 +33,7 @@ namespace CollectionManager.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewData["UserId"] = userId;
             return View(collectionId);
         }
 
@@ -57,19 +62,45 @@ namespace CollectionManager.Areas.Admin.Controllers
             {
                 var item = _mapper.Map<Item>(newItem);
                 item.CreatedAt = DateTime.UtcNow;
-                await _itemRepository.AddItemAsync(item);
-                await _itemRepository.SaveAsync();
-                return RedirectToAction("Index", "ManageUserCollectionItems", new { collectionId = item.CollectionId});
+
+                await _context.items.AddAsync(item);
+
+                var tags = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags).Select(t => new Tag
+                {
+                    Name = t.Value
+                }).ToList();
+
+                foreach (var tag in tags)
+                {
+                    var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.Name == tag.Name);
+                    if (existingTag != null)
+                    {
+                        item.Tags.Add(existingTag);
+                    }
+                    else
+                    {
+                        item.Tags.Add(tag);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                TempData["ToastrMessage"] = "Item created successfully";
+                TempData["ToastrType"] = "success";
+
+                var userId = RouteData.Values["userId"].ToString();
+                return RedirectToAction("Index", "ManageUserCollectionItems", new { collectionId = item.CollectionId, userId = userId});
             }
 
             return View(newItem);
         }
 
         [HttpGet("{id}/edit")]
-        public async Task<IActionResult> Edit(int Id)
+        public async Task<IActionResult> Edit(int Id, string userId)
         {
             var item = await _itemRepository.GetItemAsync(Id);
             var itemModel = _mapper.Map<ItemModel>(item);
+            ViewData["UserId"] = userId;
             return View(itemModel);
         }
 
@@ -149,6 +180,10 @@ namespace CollectionManager.Areas.Admin.Controllers
                 return NotFound();
             }
             var itemModel = _mapper.Map<ItemModel>(item);
+
+            var userId = RouteData.Values["userId"].ToString();
+            ViewData["UserId"] = userId;
+
             return View(itemModel);
         }
 
@@ -160,9 +195,9 @@ namespace CollectionManager.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            _itemRepository.Delete(item);
+            await _itemRepository.Delete(id);
             await _itemRepository.SaveAsync();
-            var userId = RouteData.Values["userId"].ToString();
+            var userId = RouteData.Values["userId"].ToString();    
             return RedirectToAction("Index", new {collectionId = item.CollectionId, userId = userId});
         }
     }
