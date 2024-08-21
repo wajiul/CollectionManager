@@ -3,6 +3,7 @@ using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ using System.Security.Claims;
 namespace CollectionManager.Controllers
 {
     [Route("/profile/my/collections/{collectionId}/items")]
+    [Authorize]
     public class ProfileCollectionItemsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -126,6 +128,7 @@ namespace CollectionManager.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                _itemRepository.UpdateSearchVector();
 
                 TempData["ToastrMessage"] = "Item created successfully";
                 TempData["ToastrType"] = "success";
@@ -209,6 +212,7 @@ namespace CollectionManager.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                _itemRepository.UpdateSearchVector();
 
                 TempData["ToastrMessage"] = "Item updated successfully";
                 TempData["ToastrType"] = "success";
@@ -241,6 +245,7 @@ namespace CollectionManager.Controllers
             }
             await _itemRepository.Delete(id);
             await _itemRepository.SaveAsync();
+            _itemRepository.UpdateSearchVector();
 
             TempData["ToastrMessage"] = "Item deleted successfully";
             TempData["ToastrType"] = "success";
@@ -249,7 +254,7 @@ namespace CollectionManager.Controllers
         }
 
         [HttpGet]
-        [Route("tags")]
+        [Route("/tags")]
         public async Task<IActionResult> GetTags()
         {
             var tags = await _itemRepository.GetTagsAsync();

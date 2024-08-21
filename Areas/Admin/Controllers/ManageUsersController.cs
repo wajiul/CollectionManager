@@ -11,7 +11,7 @@ namespace CollectionManager.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/manage-users")]
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public class ManageUsersController : Controller
     {
         private readonly CollectionMangerDbContext _context;

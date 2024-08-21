@@ -3,6 +3,7 @@ using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Security.Claims;
 namespace CollectionManager.Controllers
 {
     [Route("profile/my/collections")]
+    [Authorize]
     public class ProfileCollectionsController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -68,9 +70,31 @@ namespace CollectionManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                var collectionEntity = _mapper.Map<Collection>(collectionModel);
-                await _collectionRepository.CreateCollectionAsync(collectionEntity);
-                await _collectionRepository.SaveAsync();
+                try
+                {
+                    var collectionEntity = _mapper.Map<Collection>(collectionModel);
+                    await _collectionRepository.CreateCollectionAsync(collectionEntity);
+                    await _collectionRepository.SaveAsync();
+                    _collectionRepository.UpdateSearchVector();
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("duplicate key"))
+                    {
+                        ModelState.AddModelError("", "Collection already exist.");
+                        return View(collectionModel);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    TempData["ToastrMessage"] = "An error occured inserting collection";
+                    TempData["ToastrType"] = "error";
+                    return View(collectionModel);
+                }
 
                 TempData["ToastrMessage"] = "Collection created successfully";
                 TempData["ToastrType"] = "success";
@@ -118,21 +142,32 @@ namespace CollectionManager.Controllers
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
                     collection.Description = collectionModel.Description;
-                    collection.ImageUrl = collectionModel.ImageUrl;
 
                     await _collectionRepository.SaveAsync();
+                    _collectionRepository.UpdateSearchVector();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException ex)
                 {
-                    if (!CollectionExists(collectionModel.Id))
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("duplicate key"))
                     {
-                        return NotFound();
+                        ModelState.AddModelError("", "Collection already exist.");
+                        return View(collectionModel);
                     }
                     else
                     {
                         throw;
                     }
                 }
+                catch (Exception)
+                {
+                    TempData["ToastrMessage"] = "An error occured updating collection";
+                    TempData["ToastrType"] = "error";
+                    return View(collectionModel);
+                }
+
+                TempData["ToastrMessage"] = "Successfully updated collection";
+                TempData["ToastrType"] = "success";
+
                 return RedirectToAction("Index", "ProfileCollections");
             }
             return View(collectionModel);
@@ -166,6 +201,10 @@ namespace CollectionManager.Controllers
 
             _collectionRepository.DeleteCollection(collection);
             await _collectionRepository.SaveAsync();
+            _collectionRepository.UpdateSearchVector();
+
+            TempData["ToastrMessage"] = "Successfully deleted collection";
+            TempData["ToastrType"] = "success";
 
             return RedirectToAction("Index");
         }

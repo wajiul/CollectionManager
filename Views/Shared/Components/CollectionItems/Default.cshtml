@@ -40,7 +40,7 @@
         }
         else if(action)
         {
-            <a asp-action="Create" asp-controller="ProfileCollectionItems" class="btn btn-primary px-4 mb-2">Add Item</a>
+            <a asp-action="Create" asp-controller="ProfileCollectionItems" asp-route-collectionId="@Model.Id" class="btn btn-primary px-4 mb-2">Add Item</a>
         }
     </div>
     <div class="card shadow min_width-567">

@@ -23,7 +23,6 @@ namespace CollectionManager.Data_Access.Repositories
                      Name = c.Name,
                      Description = c.Description,
                      Category = c.Category,
-                     ImageUrl = c.ImageUrl,
                      Author = c.User.FirstName,
                      UserId = c.UserId,
                      ItemCount = c.Items.Count,
@@ -42,7 +41,6 @@ namespace CollectionManager.Data_Access.Repositories
                      Name = c.Name,
                      Description = c.Description,
                      Category = c.Category,
-                     ImageUrl = c.ImageUrl,
                      Author = c.User.FirstName,
                      UserId = c.UserId,
                      ItemCount = c.Items.Count,
@@ -59,7 +57,6 @@ namespace CollectionManager.Data_Access.Repositories
                         Name = c.Name,
                         Description = c.Description,
                         Category = c.Category,
-                        ImageUrl = c.ImageUrl,
                         UserId = c.UserId,
                         Items = c.Items.Select(i => new ItemWithReactionCountModel
                         {
@@ -180,6 +177,11 @@ namespace CollectionManager.Data_Access.Repositories
         public void DeleteCustomField(CustomField customField)
         {
             _context.customFields .Remove(customField);
+        }
+
+        public void UpdateSearchVector()
+        {
+            _context.UpdateCollectionSearchVector();
         }
 
         public async Task SaveAsync()

@@ -2,6 +2,7 @@
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Enums;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -35,7 +36,7 @@ namespace CollectionManager.Controllers
             var user = await _userManager.FindByEmailAsync(loginData.Email);
             if(user != null && user.Status == UserStatus.Blocked) 
             {
-                ModelState.AddModelError("", "user is blocked");
+                ModelState.AddModelError("", "User is blocked");
                 return View(user);
             }
             var result = await _signInManager.PasswordSignInAsync(loginData.Email, loginData.Password, loginData.RememberMe, false);
@@ -94,6 +95,7 @@ namespace CollectionManager.Controllers
             return View(signUpData);
         }
 
+        [Authorize]
         public async new Task<IActionResult> SignOut() {
             await _signInManager.SignOutAsync();
             return RedirectToAction("index", "home");

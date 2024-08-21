@@ -1,5 +1,6 @@
 ﻿using CollectionManager.Data_Access.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CollectionManager.Components
 {
@@ -11,9 +12,10 @@ namespace CollectionManager.Components
         {
             _itemRepository = itemRepository;
         }
-        public async Task<IViewComponentResult> InvokeAsync(int Id)
+        public async Task<IViewComponentResult> InvokeAsync(int Id, bool canReact = false)
         {
             var item = await _itemRepository.GetItemWithReactionsAsync(Id);
+            ViewData["canReact"] = canReact;
             return View(item);
         }
     }

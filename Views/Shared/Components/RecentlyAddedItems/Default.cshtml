@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ItemWithCreationDateModel>
+﻿@model IEnumerable<ItemWithReactionCountAndDateModel>
 
 <div class="container">
     <div class="row justify-content-center top-items">
@@ -15,8 +15,8 @@
                                 <a href="#">@item.Name</a>
                             </div>
                             <div class="d-flex gap-2 col-md-3">
-                                <p class="mb-0 pb-0"><i class="bi bi-hand-thumbs-up me-1"></i>3</p>
-                                <p class="mb-0 pb-0"><i class="bi bi-chat me-1"></i>9</p>
+                                <p class="mb-0 pb-0"><i class="bi bi-hand-thumbs-up me-1"></i>@item.Likes</p>
+                                <p class="mb-0 pb-0"><i class="bi bi-chat me-1"></i>@item.Comments</p>
                             </div>
                         </div>
                     </div>

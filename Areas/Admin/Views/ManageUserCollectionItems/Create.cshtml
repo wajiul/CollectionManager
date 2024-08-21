@@ -2,66 +2,82 @@
 
 @{
     ViewData["Title"] = "Create";
+    string userId = (string)ViewData["UserId"];
 }
 <div class="container">
-
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="text-center">Create Item</h1>
                 </div>
-                <input asp-for="CollectionId" value="@Model.CollectionId" hidden />
+                <div class="card-body">
 
-                <div class="form-group">
-                    <label asp-for="Tags" class="control-label"></label>
-                    <input asp-for="Tags" id="tags-input" class="form-control" />
-                    <span asp-validation-for="Tags" class="text-danger"></span>
-                </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <form asp-action="Create" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <input asp-for="CollectionId" value="@Model.CollectionId" hidden />
 
-                @for (int i = 0; i < Model.FieldValues.Count; i++)
-                {
-                    var field = Model.FieldValues[i];
-                    <div class="form-group">
-                        <label class="control-label">@field.Name</label>
+                                <div class="form-group">
+                                    <label asp-for="Tags" class="control-label"></label>
+                                    <input asp-for="Tags" id="tags-input" class="form-control" />
+                                    <span asp-validation-for="Tags" class="text-danger"></span>
+                                </div>
 
-                        <input asp-for="@Model.FieldValues[i].Id" value="@Model.FieldValues[i].Id" hidden />
-                        <input asp-for="@Model.FieldValues[i].ItemId" value="@Model.FieldValues[i].ItemId" hidden />
+                                @for (int i = 0; i < Model.FieldValues.Count; i++)
+                                {
+                                    var field = Model.FieldValues[i];
+                                    <div class="form-group">
+                                        <label class="control-label">@field.Name</label>
 
-                        @if (field.Type == CustomFieldType.Integer)
-                        {
-                            <input asp-for="@Model.FieldValues[i].Value" type="number" class="form-control" />
-                        }
-                        else if (field.Type == CustomFieldType.String)
-                        {
-                            <input asp-for="@Model.FieldValues[i].Value" type="text" class="form-control" />
-                        }
-                        else if (field.Type == CustomFieldType.MultilineText)
-                        {
-                            <textarea asp-for="@Model.FieldValues[i].Value" class="form-control"></textarea>
-                        }
-                        else if (field.Type == CustomFieldType.Boolean)
-                        {
-                            <input asp-for="@Model.FieldValues[i].Value" type="checkbox" class="form-control" />
-                        }
-                        else if (field.Type == CustomFieldType.Date)
-                        {
-                            <input asp-for="@Model.FieldValues[i].Value" type="date" class="form-control" />
-                        }
+                                        <input asp-for="@Model.FieldValues[i].Id" value="@Model.FieldValues[i].Id" hidden />
+                                        <input asp-for="@Model.FieldValues[i].ItemId" value="@Model.FieldValues[i].ItemId" hidden />
+
+                                        @if (field.Type == CustomFieldType.Integer)
+                                        {
+                                            <input asp-for="@Model.FieldValues[i].Value" type="number" class="form-control" />
+                                        }
+                                        else if (field.Type == CustomFieldType.String)
+                                        {
+                                            <input asp-for="@Model.FieldValues[i].Value" type="text" class="form-control" />
+                                        }
+                                        else if (field.Type == CustomFieldType.MultilineText)
+                                        {
+                                            <textarea asp-for="@Model.FieldValues[i].Value" class="form-control"></textarea>
+                                        }
+                                        else if (field.Type == CustomFieldType.Boolean)
+                                        {
+                                            <input asp-for="@Model.FieldValues[i].Value" type="checkbox" class="form-control" />
+                                        }
+                                        else if (field.Type == CustomFieldType.Date)
+                                        {
+                                            <input asp-for="@Model.FieldValues[i].Value" type="date" class="form-control" />
+                                        }
+                                    </div>
+                                }
+                                <form asp-action="DeleteConfirmed" asp-route-collectionId="@Model.CollectionId" asp-route-userId="@userId">
+                                    <input type="hidden" asp-for="Id" />
+                                    <div class="d-flex flex-column flex-sm-row gap-1 justify-content-center align-items-center mt-3">
+                                        <button type="submit" class="btn btn-primary w-50">Submit</button>
+                                        <a asp-action="Index"
+                                           asp-controller="ManageUserCollectionItems"
+                                           asp-route-collectionId="@Model.CollectionId"
+                                           asp-route-userId="@userId"
+                                           class="btn btn-dark w-50">Back To List</a>
+                                    </div>
+                                </form>
+                            </form>
+                        </div>
                     </div>
-                }
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
@@ -74,19 +90,37 @@
 
     <script>
         $(document).ready(function () {
-            var whitelist = ["JavaScript", "Python", "Java", "C#", "Ruby", "PHP", "Swift", "Kotlin", "Go", "Rust"];
+            var tagList = [];
 
-            // Initialize Tagify on the input element
-            var input = document.getElementById('tags-input');
-            var tagify = new Tagify(input, {
-                whitelist: whitelist,
-                dropdown: {
-                    maxItems: 20,           // Maximum items to show in the suggestions list
-                    classname: "tags-look", // Custom class for the dropdown menu
-                    enabled: 0,             // Show suggestions on focus
-                    closeOnSelect: false    // Keep dropdown open after selecting a suggestion
-                }
-            });
+            function initTagify() {
+                var input = document.getElementById('tags-input');
+                console.log('init-tags ', tagList);
+                var tagify = new Tagify(input, {
+                    whitelist: tagList,
+                    dropdown: {
+                        maxItems: 20,
+                        classname: "tags-look",
+                        enabled: 0,
+                        closeOnSelect: false
+                    }
+                });
+            }
+
+            function getTags() {
+                $.ajax({
+                    url: '/tags',
+                    contentType: 'application/json',
+                    method: 'GET',
+                    success: function (response) {
+                        console.log('tags ', response);
+                        tagList = response;
+                        initTagify();
+
+                    }
+                });
+            }
+
+            getTags();
         });
     </script>
 }

@@ -28,13 +28,13 @@ namespace CollectionManager.Data_Access
                 .HasOne(c => c.Item)
                 .WithMany(i => i.Comments)
                 .HasForeignKey(c => c.ItemId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Like>()
                  .HasOne(i => i.Item)
                  .WithMany(l => l.Likes)
                  .HasForeignKey(f => f.ItemId)
-                 .OnDelete(DeleteBehavior.NoAction);
+                 .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<Collection>()
@@ -75,6 +75,14 @@ namespace CollectionManager.Data_Access
                           FROM public.""comments"" 
                           WHERE ""ItemId"" = public.""items"".""Id""), '')
             );";
+            Database.ExecuteSqlRaw(sql);
+        }
+
+        public void UpdateCollectionSearchVector()
+        {
+            var sql = @"
+            UPDATE Collections
+            SET search_vector = to_tsvector('english', ""Name"" || ' ' || ""Description"" || ' ' || ""Category"");";
             Database.ExecuteSqlRaw(sql);
         }
 

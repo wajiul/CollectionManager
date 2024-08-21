@@ -105,16 +105,18 @@ namespace CollectionManager.Data_Access.Repositories
         {
             await _context.items.AddAsync(item);
         }
-        public async Task<IEnumerable<ItemWithCreationDateModel>> GetRecentlyAddedItemAsync()
+        public async Task<IEnumerable<ItemWithReactionCountAndDateModel>> GetRecentlyAddedItemAsync()
         {
             return await _context.items
                 .OrderByDescending(i => i.CreatedAt)
-                .Select(i => new ItemWithCreationDateModel
+                .Select(i => new ItemWithReactionCountAndDateModel
                 {
                     Id = i.Id,
                     Name = i.Name,
-                    CreatedAt = i.CreatedAt.ToString("MMMM yyyy"),
+                    CreatedAt = i.CreatedAt.ToString("dd MMM, yyyy"),
                     CollectionId = i.CollectionId,
+                    Likes = i.Likes.Count,
+                    Comments = i.Comments.Count
                 })
                 .Take(10)
                 .ToListAsync();
@@ -164,11 +166,21 @@ namespace CollectionManager.Data_Access.Repositories
 
         public async Task Delete(int id)
         {
-            var item = await _context.items.FindAsync(id);
+            var item = await _context.items
+                .Include(i => i.Tags)
+                .Include(i => i.Comments)
+                .Include(i => i.FieldValues)
+                .FirstOrDefaultAsync(x => x.Id == id);  
+
             if (item != null)
             {
                 _context.items.Remove(item);
             }
+        }
+
+        public void UpdateSearchVector()
+        {
+            _context.UpdateItemSearchVectors();
         }
 
         public async Task SaveAsync()

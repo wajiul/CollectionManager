@@ -3,6 +3,7 @@ using CollectionManager.Data_Access;
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace CollectionManager.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/user/{userId}/collections/{collectionId}/items")]
+    [Authorize(Roles ="admin")]
     public class ManageUserCollectionItemsController : Controller
     {
         private readonly CollectionRepository _collectionRepository;
@@ -51,6 +53,8 @@ namespace CollectionManager.Areas.Admin.Controllers
             itemModel.CollectionId = collectionId;
             itemModel.FieldValues = await _collectionRepository.GetCustomFieldsOfCollection(collectionId);
 
+            var userId = RouteData.Values["userId"].ToString();
+            ViewData["UserId"] = userId;
             return View(itemModel);
 
         }

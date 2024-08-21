@@ -2,6 +2,8 @@
 @{
     var toastrMessage = TempData["ToastrMessage"] as string;
     var toastrType = TempData["ToastrType"] as string;
+    TempData["ToastrMessage"] = null;
+    TempData["ToastrType"] = null;
 }
 
 @if (!string.IsNullOrEmpty(toastrMessage) && !string.IsNullOrEmpty(toastrType))

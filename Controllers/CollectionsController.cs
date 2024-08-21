@@ -14,6 +14,7 @@ using System.Security.Claims;
 using CollectionManager.Data_Access.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CollectionManager.Controllers
 {
@@ -65,6 +66,7 @@ namespace CollectionManager.Controllers
         }
 
         [HttpPost("items/like")]
+        [Authorize]
         public async Task<IActionResult> Like([FromBody] LikeModel like)
         {
             var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
@@ -95,11 +97,9 @@ namespace CollectionManager.Controllers
         }
 
         [HttpPost("items/comment")]
+        [Authorize]
         public async Task<IActionResult> Comment([FromBody] CommentModel comment)
         {
-            
-
-
             var commentEntity = _mapper.Map<Comment>(comment);
             commentEntity.CreatedAt = DateTime.UtcNow;
 

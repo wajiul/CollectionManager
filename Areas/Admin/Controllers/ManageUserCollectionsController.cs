@@ -2,6 +2,7 @@
 using CollectionManager.Data_Access.Entities;
 using CollectionManager.Data_Access.Repositories;
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -10,6 +11,7 @@ namespace CollectionManager.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/users/{userId}/collections")]
+    [Authorize(Roles = "admin")]
     public class ManageUserCollectionsController : Controller
     {
         private readonly CollectionRepository _collectionRepository;
@@ -133,7 +135,6 @@ namespace CollectionManager.Areas.Admin.Controllers
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
                     collection.Description = collectionModel.Description;
-                    collection.ImageUrl = collectionModel.ImageUrl;
 
                     await _collectionRepository.SaveAsync();
                 }

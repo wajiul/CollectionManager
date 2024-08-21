@@ -76,19 +76,37 @@
 
     <script>
         $(document).ready(function () {
-            var whitelist = ["JavaScript", "Python", "Java", "C#", "Ruby", "PHP", "Swift", "Kotlin", "Go", "Rust"];
+            var tagList = [];
 
-            // Initialize Tagify on the input element
-            var input = document.getElementById('tags-input');
-            var tagify = new Tagify(input, {
-                whitelist: whitelist,
-                dropdown: {
-                    maxItems: 20,           // Maximum items to show in the suggestions list
-                    classname: "tags-look", // Custom class for the dropdown menu
-                    enabled: 0,             // Show suggestions on focus
-                    closeOnSelect: false    // Keep dropdown open after selecting a suggestion
-                }
-            });
+            function initTagify() {
+                var input = document.getElementById('tags-input');
+                console.log('init-tags ', tagList);
+                var tagify = new Tagify(input, {
+                    whitelist: tagList,
+                    dropdown: {
+                        maxItems: 20,           
+                        classname: "tags-look", 
+                        enabled: 0,            
+                        closeOnSelect: false
+                    }
+                });
+            }
+
+            function getTags() {
+                $.ajax({
+                    url: '/tags',
+                    contentType: 'application/json',
+                    method: 'GET',
+                    success: function (response) {
+                        console.log('tags ', response);
+                        tagList = response;
+                        initTagify();
+
+                    }
+                });
+            }
+
+            getTags();
         });
     </script>
 }

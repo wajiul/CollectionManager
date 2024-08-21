@@ -11,10 +11,7 @@ namespace CollectionManager.Models
         public List<CustomFieldValueModel> FieldValues { get; set; } = new List<CustomFieldValueModel>();
     }
 
-    public class ItemWithCreationDateModel: ItemModel
-    {
-        public string CreatedAt { get; set; } = string.Empty;
-    }
+  
 
     public class ItemWithReactionModel : ItemViewModel
     {
@@ -27,4 +24,10 @@ namespace CollectionManager.Models
         public int Likes { get; set; }
         public int Comments { get; set; }
     }
+
+    public class ItemWithReactionCountAndDateModel : ItemWithReactionCountModel
+    {
+        public string CreatedAt { get; set; } = string.Empty;
+    }
+
 }

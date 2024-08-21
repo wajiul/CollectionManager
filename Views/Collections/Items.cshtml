@@ -2,10 +2,11 @@
 @{
     int itemId = @Model;
     string userId = (string)ViewData["UserId"];
+    bool canReact = !(string.IsNullOrEmpty(userId));
 }
 
 <div class="container">
-    @await Component.InvokeAsync("Item", new {Id = itemId})
+    @await Component.InvokeAsync("Item", new {Id = itemId, canReact = canReact})
 </div>
 
 
