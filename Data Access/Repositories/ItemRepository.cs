@@ -44,7 +44,7 @@ namespace CollectionManager.Data_Access.Repositories
                             ItemId = c.Id,
                             UserId = c.UserId,
                             Text = c.Text,
-                            CreatedAt = c.CreatedAt.ToString("MMMM yyyy"),
+                            CreatedAt = c.CreatedAt.ToString("dd MMM, yyyy"),
                             Commenter = string.Concat(c.User.FirstName, ' ', c.User.LastName)
                         }).ToList()
 

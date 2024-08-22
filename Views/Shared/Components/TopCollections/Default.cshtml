@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CollectionWithAuthorModel>
+﻿@model IEnumerable<CollectionWithItemCountModel>
 
 <div class="container">
     <div class="row justify-content-center top-collections">
@@ -9,14 +9,27 @@
                     <div class="card-body pt-3 pb-2">
                         <div class="row align-items-center">
                             <div class="card-name col-md-6">
-                                <a href="#">@collection.Name</a>
+                                <a asp-action="Collection" asp-controller="Collections" asp-route-id="@collection.Id">@collection.Name</a>
                             </div>
                             <div class="card-item col-md-3">
-                                23 items
+                                @collection.ItemCount
+                                @if(collection.ItemCount > 1) {
+                                    <span>items</span>
+                                }
+                                else
+                                {
+                                    <span>item</span>
+                                }
+
                             </div>
                             <div class="card-author col-md-3 d-flex gap-2 align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="#">@collection.Author</a>
+                                <a 
+                                    asp-action="Index" 
+                                    asp-controller="OtherUserProfile" 
+                                    asp-route-userId="@collection.UserId"
+                                    asp-route-id="@collection.Id"
+                                >@collection.Author</a>
                             </div>
                         </div>
                         <div class="card-description">

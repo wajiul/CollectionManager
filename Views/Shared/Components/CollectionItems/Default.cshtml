@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-start row mt-2">
         <div class="col">
             <div class="card bg-white rounded-0 border-0 min_width-567">
-                <div class="card-header py-0 bg-info text-white rounded-5">Collectioin details</div>
+                <div class="card-header py-0 bg-info text-white rounded-5">Collection details</div>
                 <div class="card-body" style="font-size:14px;">
                     <div class="row  mb-1">
                         <div class="col-md-2">Name:</div>
@@ -44,17 +44,18 @@
         }
     </div>
     <div class="card shadow min_width-567">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-white position-relative">
             <h1 class="text-center">Items</h1>
         </div>
         <div class="card-body">
-       <table class="table table-sm table-striped text-center" style="font-size:15px;">
+       <table id="itemList" class="table table-sm table-striped text-center" style="font-size:15px;">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Tags</th>
                 <th>Likes</th>
                 <th>Comments</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -92,15 +93,16 @@
                     }
                     else
                     {
-                        <td style="width:2rem;">
-                            <a 
-                                asp-action="Items" 
-                                asp-controller="Collections" 
-                                asp-route-collectionId="@Model.Id" 
-                                asp-route-id="@item.Id" 
-                                class="btn btn-outline-info"
-                            >Details</a>
-                        </td>
+                         <td style="width:2rem;">
+                              <a 
+                                  asp-action="Items" 
+                                  asp-controller="Collections" 
+                                  asp-route-collectionId="@Model.Id" 
+                                  asp-route-id="@item.Id" 
+                                  class="btn btn-outline-info"
+                              >Details</a>
+                              
+                         </td>
                     }
 
                 </tr>

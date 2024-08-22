@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CollectionManager.Controllers
 {
+    [Route("account")]
     public class AccountController : Controller
     {
         private readonly CollectionMangerDbContext _context;
@@ -21,12 +22,13 @@ namespace CollectionManager.Controllers
             _context = context;
             _userManager = userManager;
         }
+        [HttpGet("login")]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel loginData, string returnUrl =  "")
         {
             if(!ModelState.IsValid)
@@ -42,7 +44,11 @@ namespace CollectionManager.Controllers
             var result = await _signInManager.PasswordSignInAsync(loginData.Email, loginData.Password, loginData.RememberMe, false);
 
             if(result.Succeeded) {
-                if(!string.IsNullOrEmpty(returnUrl))
+
+                TempData["ToastrMessage"] = "Successfully logged in";
+                TempData["ToastrType"] = "success";
+
+                if (!string.IsNullOrEmpty(returnUrl))
                 {
                     return LocalRedirect(returnUrl);
                 }
@@ -54,6 +60,7 @@ namespace CollectionManager.Controllers
             return View(loginData);
 
         }
+        [HttpGet("signup")]
         public IActionResult SignUp()
         {
             return View();
@@ -68,7 +75,7 @@ namespace CollectionManager.Controllers
             var existingUser = await _userManager.FindByEmailAsync(signUpData.Email);
             if(existingUser != null) 
             {
-                ModelState.AddModelError("", "email already exist");
+                ModelState.AddModelError("", "Email already exist");
                 return View(signUpData);
             }
 
@@ -85,6 +92,9 @@ namespace CollectionManager.Controllers
 
             if(result.Succeeded) 
             {
+                TempData["ToastrMessage"] = "Signed up successfully";
+                TempData["ToastrType"] = "success";
+
                 return RedirectToAction("Login");
             }
 
@@ -94,10 +104,13 @@ namespace CollectionManager.Controllers
             }
             return View(signUpData);
         }
-
+        [Route("signout")]
         [Authorize]
+        
         public async new Task<IActionResult> SignOut() {
             await _signInManager.SignOutAsync();
+            TempData["ToastrMessage"] = "Successfully logged out";
+            TempData["ToastrType"] = "success";
             return RedirectToAction("index", "home");
         }
     }

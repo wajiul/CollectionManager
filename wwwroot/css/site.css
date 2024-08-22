@@ -27,6 +27,9 @@ footer #developer{
 header #searchBox {
     width: 15rem;
 }
+
+
+
 @media (max-width: 992px) {
     header #searchBox {
         width: 100%;

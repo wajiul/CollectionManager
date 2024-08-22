@@ -16,10 +16,7 @@ namespace CollectionManager.Models
         public string UserId { get; set; } = string.Empty;
     }
 
-    public class CollectionWithAuthorModel: CollectionModel
-    {
-        public string Author { get; set; } = string.Empty;
-    }
+
    
     public class CollectionWithItemsModel: CollectionModel
     {

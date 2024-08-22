@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.0.3/tagify.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -30,7 +31,7 @@
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Collections">Collections</a>
+                            <a class="nav-link" asp-action="Index" asp-controller="ManageUsers" asp-area="admin">Users</a>
                         </li>
 
                     </ul>
@@ -57,7 +58,7 @@
 
     <footer class="border-top text-muted">
         <div class="container text-center">
-            <p class="mb-0 pb-0">&copy; 2024 - Collection Manager</p>
+            <p class="mb-0 pb-0">&copy; 2024 - Collection Manager(CM)</p>
             <p id="developer">Developed by Owajeul</p>
         </div>
     </footer>
