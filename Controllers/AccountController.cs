@@ -63,7 +63,7 @@ namespace CollectionManager.Controllers
         {
             return View();
         }
-        [HttpPost]
+        [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SignUpModel signUpData) 
         {
             if(!ModelState.IsValid) 
@@ -93,7 +93,7 @@ namespace CollectionManager.Controllers
                 TempData["ToastrMessage"] = "Signed up successfully";
                 TempData["ToastrType"] = "success";
 
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account");
             }
 
             foreach(var error in result.Errors) 

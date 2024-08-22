@@ -32,7 +32,7 @@
                                 @for (int i = 0; i < Model.FieldValues.Count; i++)
                                 {
                                     var field = Model.FieldValues[i];
-                                    <div class="form-group">
+                                    <div class="form-group mb-2">
                                         <label class="control-label">@field.Name</label>
 
                                         <input asp-for="@Model.FieldValues[i].Id" value="@Model.FieldValues[i].Id" hidden />
@@ -52,7 +52,17 @@
                                         }
                                         else if (field.Type == CustomFieldType.Boolean)
                                         {
-                                            <input asp-for="@Model.FieldValues[i].Value" type="checkbox" class="form-control" />
+                                            bool isChecked;
+                                            bool parseResult = bool.TryParse(Model.FieldValues[i].Value, out isChecked);
+                                            if (!parseResult)
+                                            {
+                                                isChecked = false;
+                                            }
+                                            <input type="checkbox"
+                                                   class="form-check-input ms-2"
+                                                   value="true"
+                                                   name="FieldValues[@i].Value"
+                                            @(isChecked ? "checked" : "") />
                                         }
                                         else if (field.Type == CustomFieldType.Date)
                                         {

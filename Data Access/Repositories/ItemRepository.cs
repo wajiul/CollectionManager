@@ -203,10 +203,5 @@ namespace CollectionManager.Data_Access.Repositories
             _context.UpdateItemSearchVectors();
         }
 
-        public async Task SaveAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
-
     }
 }

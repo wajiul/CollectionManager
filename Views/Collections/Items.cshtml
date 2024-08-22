@@ -1,11 +1,18 @@
 ﻿@model int 
 @{
     int itemId = @Model;
+    int collectionId = (int)ViewData["CollectionId"];
     string userId = (string)ViewData["UserId"];
     bool canReact = !(string.IsNullOrEmpty(userId));
 }
 
 <div class="container">
+    <div class="ms-3">
+        <a asp-action="Collection" asp-controller="Collections" asp-route-id="@collectionId" style="font-size:13px;">
+            <span><</span>Items
+        </a>
+    </div>
+
     @await Component.InvokeAsync("Item", new {Id = itemId, canReact = canReact})
 </div>
 

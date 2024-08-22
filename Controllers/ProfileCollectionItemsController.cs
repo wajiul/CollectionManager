@@ -39,49 +39,12 @@ namespace CollectionManager.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Items(int? id)
+        public IActionResult Items(int? id, int? collectionId = null)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["UserId"] = userId;
+            ViewData["CollectionId"] = collectionId;
             return View(id);
-        }
-
-        public async Task<IActionResult> Details(int Id)
-        {
-            var item = await _context.items
-                .Include(t => t.Tags)
-                .Include(f => f.FieldValues)
-                    .ThenInclude(c => c.CustomField)
-                .FirstOrDefaultAsync(x => x.Id == Id);
-
-            var itemTags = new List<TagModel>();
-            foreach (var itemTag in item.Tags)
-            {
-                itemTags.Add(new TagModel { Id = itemTag.Id, Name = itemTag.Name });
-            }
-
-            var fieldValues = new List<CustomFieldValueModel>();
-
-            foreach (var field in item.FieldValues)
-            {
-                fieldValues.Add(new CustomFieldValueModel
-                {
-                    Id = field.Id,
-                    Value = field.Value,
-                    Name = field.CustomField.Name,
-                    Type = field.CustomField.Type,
-                    ItemId = item.Id
-                });
-            }
-
-            var itemModel = new ItemModel
-            {
-                Name = item.Name,
-                Tags = JsonConvert.SerializeObject(itemTags),
-                FieldValues = fieldValues
-            };
-
-            return View(itemModel);
         }
 
         [HttpGet("create")]

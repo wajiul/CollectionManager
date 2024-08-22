@@ -5,16 +5,16 @@ namespace CollectionManager.Components
 {
     public class RecentlyAddedItemsViewComponent: ViewComponent
     {
-        private readonly ItemRepository _itemRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RecentlyAddedItemsViewComponent(ItemRepository itemRepository)
+        public RecentlyAddedItemsViewComponent(IUnitOfWork unitOfWork)
         {
-            _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var items = await _itemRepository.GetRecentlyAddedItemAsync();
+            var items = await _unitOfWork.Item.GetRecentlyAddedItemAsync();
             return View(items);
         }
 

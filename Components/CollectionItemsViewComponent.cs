@@ -8,16 +8,16 @@ namespace CollectionManager.Components
 {
     public class CollectionItemsViewComponent: ViewComponent
     {
-        private readonly CollectionRepository _collectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CollectionItemsViewComponent(CollectionRepository collectionRepository)
+        public CollectionItemsViewComponent(IUnitOfWork unitOfWork)
         {
-            _collectionRepository = collectionRepository;
+            this._unitOfWork = unitOfWork;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(int collectionId, bool displayAction = false, bool isAdmin = false)
         {
-            var collectionItems = await _collectionRepository.GetCollectionWithItemsReactionCount(collectionId);
+            var collectionItems = await _unitOfWork.Collection.GetCollectionWithItemsReactionCount(collectionId);
             ViewData["Action"] = displayAction;
             ViewData["IsAdmin"] = isAdmin;
             return View(collectionItems);

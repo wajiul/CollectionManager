@@ -20,7 +20,6 @@ namespace CollectionManager.Data_Access.Repositories
         Task<int> GetTotalCommentOfItemAsync(int itemId);
         Task<int> GetTotalLikeOfItemAsync(int itemId);
         bool IsUserLikedAsync(int itemId, string userId);
-        Task SaveAsync();
         void UpdateSearchVector();
     }
 }

@@ -5,15 +5,15 @@ namespace CollectionManager.Components
 {
     public class TagCloudViewComponent: ViewComponent
     {
-        private readonly ItemRepository _itemRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TagCloudViewComponent(ItemRepository itemRepository)
+        public TagCloudViewComponent(IUnitOfWork unitOfWork)
         {
-            _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var tags = await _itemRepository.GetTagsAsync();
+            var tags = await _unitOfWork.Item.GetTagsAsync();
             return View(tags);
         }
     }

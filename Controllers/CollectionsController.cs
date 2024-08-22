@@ -54,10 +54,11 @@ namespace CollectionManager.Controllers
         }
 
         [HttpGet("{collectionId}/items/{id}")]
-        public IActionResult Items(int? Id)
+        public IActionResult Items(int? Id, int? collectionId = null)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["UserId"] = userId;
+            ViewData["CollectionId"] = collectionId;
             return View(Id);
         }
 

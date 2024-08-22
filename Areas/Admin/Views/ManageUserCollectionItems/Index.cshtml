@@ -1,5 +1,8 @@
 ﻿@model int
 
 <div class="container">
+    <div class="ms-3" style="font-size:13px;">
+        <a href="javascript:history.back()">back to collections</a>
+    </div>
     @await Component.InvokeAsync("CollectionItems", new { collectionId = @Model, displayAction = true, isAdmin = true})
 </div>

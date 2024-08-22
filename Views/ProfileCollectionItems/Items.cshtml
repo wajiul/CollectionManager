@@ -1,6 +1,13 @@
 ﻿@model int 
-
+@{
+    int collectionId = (int)ViewData["CollectionId"];
+}
 <div class="container">
+    <div class="ms-3">
+        <a asp-action="Index" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collectionId" style="font-size:13px;">
+            <span><</span>Items
+        </a>
+    </div>
     @await Component.InvokeAsync("Item", new {Id = @Model})
 </div>
 

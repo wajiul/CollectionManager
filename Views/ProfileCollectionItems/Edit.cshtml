@@ -54,7 +54,17 @@
                                     }
                                     else if (field.Type == CustomFieldType.Boolean)
                                     {
-                                        <input asp-for="@Model.FieldValues[i].Value" type="checkbox" class="form-control" value="@Model.FieldValues[i].Value" />
+                                        bool isChecked;
+                                        bool parseResult = bool.TryParse(Model.FieldValues[i].Value, out isChecked);
+                                        if (!parseResult)
+                                        {
+                                            isChecked = false;
+                                        }
+                                        <input type="checkbox"
+                                               class="form-check-input ms-2"
+                                               value="true"
+                                               name="FieldValues[@i].Value"
+                                        @(isChecked ? "checked" : "") />
                                     }
                                     else if (field.Type == CustomFieldType.Date)
                                     {

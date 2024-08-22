@@ -6,11 +6,11 @@ namespace CollectionManager.Components
 {
     public class CollectionsViewComponent: ViewComponent
     {
-        private readonly CollectionRepository _collectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CollectionsViewComponent(CollectionRepository collectionRepository)
+        public CollectionsViewComponent(IUnitOfWork unitOfWork)
         {
-            _collectionRepository = collectionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<IViewComponentResult> InvokeAsync(string? userId, bool displayAction = false, bool displayAuthor = true, bool isAdmin = false)
         {
@@ -21,10 +21,10 @@ namespace CollectionManager.Components
 
             if (userId == null)
             {
-                var collections = await _collectionRepository.GetCollections();
+                var collections = await _unitOfWork.Collection.GetCollections();
                 return View(collections);
             }
-            var userCollections = await _collectionRepository.GetUserCollectionsAsync(userId);
+            var userCollections = await _unitOfWork.Collection.GetUserCollectionsAsync(userId);
             return View(userCollections);
         }
        

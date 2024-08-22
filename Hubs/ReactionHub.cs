@@ -8,12 +8,12 @@ namespace CollectionManager.Hubs
 {
     public class ReactionHub: Hub
     {
-        private readonly ItemRepository _itemRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ReactionHub(ItemRepository itemRepository, IMapper mapper)
+        public ReactionHub(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -21,20 +21,20 @@ namespace CollectionManager.Hubs
         {
             try
             {
-                var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
+                var liked = _unitOfWork.Item.IsUserLikedAsync(like.ItemId, like.UserId);
                 if(liked)
                 {
                     return;
                 }
                 var likeEntity = _mapper.Map<Like>(like);
-                await _itemRepository.AddLikeAsync(likeEntity);
-                await _itemRepository.SaveAsync();
+                await _unitOfWork.Item.AddLikeAsync(likeEntity);
+                await _unitOfWork.Save();
             }
             catch(Exception ex)
             {
                 throw;
             }
-            int likeCount= await _itemRepository.GetTotalLikeOfItemAsync(like.ItemId);
+            int likeCount= await _unitOfWork.Item.GetTotalLikeOfItemAsync(like.ItemId);
             await Clients.All.SendAsync("GetItemLikeCount", likeCount);
         }
 
@@ -43,11 +43,11 @@ namespace CollectionManager.Hubs
             var commentEntity = _mapper.Map<Comment>(comment);
             commentEntity.CreatedAt = DateTime.UtcNow;
 
-            await _itemRepository.AddCommentAsync(commentEntity);
-            await _itemRepository.SaveAsync();
+            await _unitOfWork.Item.AddCommentAsync(commentEntity);
+            await _unitOfWork.Save();
 
-            var newComment = await _itemRepository.GetCommentAsync(commentEntity.Id);
-            int commentCnt = await _itemRepository.GetTotalCommentOfItemAsync(comment.ItemId);
+            var newComment = await _unitOfWork.Item.GetCommentAsync(commentEntity.Id);
+            int commentCnt = await _unitOfWork.Item.GetTotalCommentOfItemAsync(comment.ItemId);
             await Clients.All.SendAsync("GetComment", newComment, commentCnt);
         }
 

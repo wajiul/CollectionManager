@@ -1,5 +1,6 @@
 ﻿using CollectionManager.Data_Access.Entities;
 using CollectionManager.Models;
+using NpgsqlTypes;
 
 namespace CollectionManager.Data_Access.Repositories
 {
@@ -22,8 +23,9 @@ namespace CollectionManager.Data_Access.Repositories
         bool IsCollectionExist(int Id);
         bool IsCollectionExist(int Id, string userId);
         bool IsCustomFieldExist(CustomField customField);
-        Task SaveAsync();
         void UpdateCollection(Collection collection);
         void UpdateSearchVector();
+        Task<SearchResultModel> GetSearchResult(NpgsqlTsQuery fullTextQuery);
+
     }
 }

@@ -2,6 +2,7 @@
 using CollectionManager.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NpgsqlTypes;
 
 namespace CollectionManager.Data_Access.Repositories
 {
@@ -185,9 +186,40 @@ namespace CollectionManager.Data_Access.Repositories
             _context.UpdateCollectionSearchVector();
         }
 
-        public async Task SaveAsync()
+        public async Task<SearchResultModel> GetSearchResult(NpgsqlTsQuery fullTextQuery)
         {
-            await _context.SaveChangesAsync();
+            var matchedItems = await _context.items
+                 .Where(i => i.search_vector != null && (i.search_vector.Matches(fullTextQuery)))
+                 .Select(i => new MatchedItemModel
+                 {
+                     Id = i.Id,
+                     Name = i.Name,
+                     CollectionId = i.CollectionId,
+                     CollectionName = i.Collection.Name,
+                     LikeCount = i.Likes.Count,
+                     CommentCount = i.Comments.Count
+                 })
+                 .ToListAsync();
+
+
+            var matchedCollections = await _context.collections
+                .Where(c => c.search_vector != null && c.search_vector.Matches(fullTextQuery))
+                .Select(c => new MatchedCollectionModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    ItemCount = c.Items.Count
+                })
+                .ToListAsync();
+
+            var viewModel = new SearchResultModel
+            {
+                Items = matchedItems,
+                Collections = matchedCollections
+            };
+
+            return viewModel;
         }
 
 

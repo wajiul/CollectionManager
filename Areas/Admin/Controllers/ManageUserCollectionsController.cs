@@ -69,6 +69,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                     var collectionEntity = _mapper.Map<Collection>(collectionModel);
                     await _unitOfWork.Collection.CreateCollectionAsync(collectionEntity);
                     await _unitOfWork.Save();
+                    _unitOfWork.Collection.UpdateSearchVector();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -137,6 +138,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                     collection.Description = collectionModel.Description;
 
                     await _unitOfWork.Save();
+                    _unitOfWork.Collection.UpdateSearchVector();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -194,6 +196,7 @@ namespace CollectionManager.Areas.Admin.Controllers
 
             _unitOfWork.Collection.DeleteCollection(collection);
             await _unitOfWork.Save();
+            _unitOfWork.Collection.UpdateSearchVector();
 
             TempData["ToastrMessage"] = "Successfully deleted collection";
             TempData["ToastrType"] = "success";

@@ -5,16 +5,16 @@ namespace CollectionManager.Components
 {
     public class TopCollectionsViewComponent: ViewComponent
     {
-        private readonly CollectionRepository _collectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TopCollectionsViewComponent(CollectionRepository collectionRepository)
+        public TopCollectionsViewComponent(IUnitOfWork unitOfWork)
         {
-            _collectionRepository = collectionRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var collections = await _collectionRepository.GetTopLargestCollectionsAsync();
+            var collections = await _unitOfWork.Collection.GetTopLargestCollectionsAsync();
             return View(collections);
         }
     }

@@ -72,7 +72,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                 await _unitOfWork.Item.AddTagsAsync(item, tags);
 
                 await _unitOfWork.Save();
-
+                _unitOfWork.Item.UpdateSearchVector();
                 TempData["ToastrMessage"] = "Item created successfully";
                 TempData["ToastrType"] = "success";
 
@@ -158,6 +158,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                 }
 
                 await _unitOfWork.Save();
+                _unitOfWork.Item.UpdateSearchVector();
 
                 var userId = RouteData.Values["userId"].ToString();
 
@@ -193,6 +194,8 @@ namespace CollectionManager.Areas.Admin.Controllers
             }
             await  _unitOfWork.Item.Delete(id);
             await _unitOfWork.Save();
+            _unitOfWork.Item.UpdateSearchVector();
+
             var userId = RouteData.Values["userId"].ToString();    
             return RedirectToAction("Index", new {collectionId = item.CollectionId, userId = userId});
         }
