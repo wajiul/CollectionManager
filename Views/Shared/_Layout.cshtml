@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<User> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -36,14 +38,17 @@
   
       </ul>
 
-      <form asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm width-25">
+      <form id="searchBox" asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm">
           <input type="text" name="query" class="form-control shadow-none" placeholder="Search">
           <button class="input-group-text"><i class="bi bi-search"></i></button>
       </form>
 
-      <div class="ms-lg-3 mt-md-2 text-info">
+    @if(signInManager.IsSignedIn(User) && User.IsInRole("admin"))
+    {                 
+       <div class="ms-lg-3 mt-md-2 text-info">
           <a class="nav-link" asp-action="Index" asp-controller="ManageUsers" asp-area="admin">Admin panel</a>
       </div>  
+    }
 
       <div class="ms-lg-3 mt-md-2">
         <partial name="_signInAndOut"/>

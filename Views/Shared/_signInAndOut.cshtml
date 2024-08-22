@@ -1,6 +1,6 @@
-﻿@inject Microsoft.AspNetCore.Identity.SignInManager<User> _singInManager
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<User> singInManager
 
-@if(_singInManager.IsSignedIn(User))
+@if(singInManager.IsSignedIn(User))
 {
     <div>
         <a class="d-inline" asp-controller="Profile" asp-action="MyProfile">@User.Identity.Name</a> |
@@ -10,7 +10,7 @@
 else
 {
     <div>
-        <a class="d-inline" asp-controller="Account" asp-action="Login">Login</a>|
+        <a class="d-inline" asp-controller="Account" asp-action="Login">Login</a> | 
         <a class="d-inline" asp-controller="Account" asp-action="SignUp">SignUp</a>
     </div>
 }

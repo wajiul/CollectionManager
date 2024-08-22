@@ -21,6 +21,10 @@ builder.Services.AddScoped<CollectionRepository>();
 builder.Services.AddScoped<ItemRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSignalR();
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.Zero;
+});
 
 var app = builder.Build();
 

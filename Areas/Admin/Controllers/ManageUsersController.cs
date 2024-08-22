@@ -139,6 +139,7 @@ namespace CollectionManager.Areas.Admin.Controllers
             if(!isAdmin)
             {
                 await _userManager.AddToRoleAsync(user, admin);
+                await _userManager.UpdateSecurityStampAsync(user);
             }
         }
 
@@ -155,6 +156,7 @@ namespace CollectionManager.Areas.Admin.Controllers
             if (isAdmin)
             {
                 await _userManager.RemoveFromRoleAsync(user, admin);
+
             }
         }
 
