@@ -16,7 +16,6 @@ namespace CollectionManager.Controllers
         {
             _context = context;
         }
-        
 
         [HttpPost]
         public async Task<IActionResult> Like([FromBody] LikeModel like)

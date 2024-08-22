@@ -83,7 +83,6 @@
                     collectionId: '@Model.Id'
                 };
 
-                console.log(customField);
 
                 postCustomField(customField);
             });
@@ -111,14 +110,12 @@
 
 
             function postCustomField(field) {
-                console.log('field', field);
                 $.ajax({
                     url: `/profile/collections/customfields/add`,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(field),
                     success: function (response) {
-                        console.log(response);
                         addCustomField(response.id);
                         $("#customFieldForm").addClass('d-none');
 

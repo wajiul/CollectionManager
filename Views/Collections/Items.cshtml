@@ -29,9 +29,7 @@
             async function startConnection() {
                 try {
                     await connection.start();
-                    console.log("SignalR Connected.");
                 } catch (err) {
-                    console.error("Error starting connection: ", err);
                     setTimeout(startConnection, 5000);
                 }
             }
@@ -46,7 +44,6 @@
                     await connection.invoke("AddLike", like);
                 }
                 catch (err) {
-                    console.log('error sending like', err);
                 }
             }
 
@@ -55,12 +52,10 @@
                     await connection.invoke("AddComment", comment);
                 }
                 catch (err) {
-                    console.log('error sending comment', err);
                 }
             }
 
             connection.on("GetItemLikeCount", (cnt) => {
-                console.log('new like', cnt);
                 isLiked = true;
                 $likeButton.addClass('text-info');
                 if (cnt == 1) {
@@ -70,7 +65,6 @@
             });
 
             connection.on("GetComment", (comment, cnt) => {
-                console.log('new comment', comment);
                 let c = commentUI(comment);
                 $("#commentsContainer").prepend(c);
 
@@ -88,7 +82,6 @@
 
 
             if (isLiked == true) {
-                console.log('likeed');
                 $likeButton.addClass('text-info');
             } 
 
@@ -181,7 +174,6 @@
                 return cmt;
             } 
             function postComment(comment) {
-                console.log(comment);
                 sendComment(comment);
             }
 

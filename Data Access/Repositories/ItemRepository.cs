@@ -1,11 +1,12 @@
 ﻿using CollectionManager.Data_Access.Entities;
 using CollectionManager.Models;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Index.HPRtree;
 using Newtonsoft.Json;
 
 namespace CollectionManager.Data_Access.Repositories
 {
-    public class ItemRepository
+    public class ItemRepository : IItemRepository
     {
         private readonly CollectionMangerDbContext _context;
 
@@ -60,7 +61,7 @@ namespace CollectionManager.Data_Access.Repositories
                 .Include(t => t.Tags)
                 .Include(f => f.FieldValues)
                     .ThenInclude(c => c.CustomField)
-                .FirstOrDefaultAsync(x => x.Id == id);  
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<IEnumerable<MatchedItemModel>> GetItemsByTagAsync(int tagId)
         {
@@ -74,14 +75,14 @@ namespace CollectionManager.Data_Access.Repositories
                      .ThenInclude(t => t.Comments)
                  .FirstOrDefaultAsync();
 
-           
+
             var itemModels = new List<MatchedItemModel>();
             foreach (var item in tag.Items)
             {
                 var newItem = new MatchedItemModel
                 {
-                    Id= item.Id,
-                    Name= item.Name,
+                    Id = item.Id,
+                    Name = item.Name,
                     CollectionId = item.CollectionId,
                     CollectionName = item.Collection.Name,
                     LikeCount = item.Likes.Count,
@@ -90,16 +91,20 @@ namespace CollectionManager.Data_Access.Repositories
                 itemModels.Add(newItem);
             }
             return itemModels;
-        } 
+        }
 
         public async Task<int> GetTotalLikeOfItemAsync(int itemId)
         {
             return await _context.likes.CountAsync(x => x.ItemId == itemId);
-        } 
+        }
 
         public async Task<int> GetTotalCommentOfItemAsync(int itemId)
         {
             return await _context.comments.CountAsync(x => x.ItemId == itemId);
+        }
+        public async Task<Tag?> GetTagAsync(string tagName)
+        {
+            return await _context.tags.FirstOrDefaultAsync(t => t.Name == tagName);
         }
         public async Task AddItemAsync(Item item)
         {
@@ -136,12 +141,12 @@ namespace CollectionManager.Data_Access.Repositories
 
         public bool IsUserLikedAsync(int itemId, string userId)
         {
-            return  _context.likes.Any(x => x.ItemId == itemId && x.UserId == userId);
-        } 
+            return _context.likes.Any(x => x.ItemId == itemId && x.UserId == userId);
+        }
 
         public async Task AddLikeAsync(Like like)
         {
-           await _context.likes.AddAsync(like);
+            await _context.likes.AddAsync(like);
         }
 
         public async Task<CommentModel?> GetCommentAsync(int id)
@@ -150,14 +155,29 @@ namespace CollectionManager.Data_Access.Repositories
                 .Where(c => c.Id == id)
                 .Select(c => new CommentModel
                 {
-                    ItemId= c.Id,
-                    UserId= c.UserId,
+                    ItemId = c.Id,
+                    UserId = c.UserId,
                     Text = c.Text,
                     CreatedAt = c.CreatedAt.ToString("MMMM yyyy"),
                     Commenter = string.Concat(c.User.FirstName, ' ', c.User.LastName)
                 }).FirstOrDefaultAsync();
         }
 
+        public async Task AddTagsAsync(Item item, List<Tag> tags) 
+        {
+            foreach (var tag in tags)
+            {
+                var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.Name == tag.Name);
+                if (existingTag != null)
+                {
+                    item.Tags.Add(existingTag);
+                }
+                else
+                {
+                    item.Tags.Add(tag);
+                }
+            }
+        }
 
         public async Task AddCommentAsync(Comment comment)
         {
@@ -170,7 +190,7 @@ namespace CollectionManager.Data_Access.Repositories
                 .Include(i => i.Tags)
                 .Include(i => i.Comments)
                 .Include(i => i.FieldValues)
-                .FirstOrDefaultAsync(x => x.Id == id);  
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (item != null)
             {
@@ -187,6 +207,6 @@ namespace CollectionManager.Data_Access.Repositories
         {
             await _context.SaveChangesAsync();
         }
-       
+
     }
 }

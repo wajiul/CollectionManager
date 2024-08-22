@@ -15,14 +15,12 @@ namespace CollectionManager.Controllers
     [Authorize]
     public class ProfileCollectionsController : Controller
     {
-        private readonly CollectionMangerDbContext _context;
-        private readonly CollectionRepository _collectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProfileCollectionsController(CollectionMangerDbContext context, CollectionRepository collectionRepository, IMapper mapper)
+        public ProfileCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
-            _collectionRepository = collectionRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -40,14 +38,14 @@ namespace CollectionManager.Controllers
 
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collectionExist = _collectionRepository.IsCollectionExist(id, userId);
+            var collectionExist = _unitOfWork.Collection.IsCollectionExist(id, userId);
 
             if (!collectionExist)
             {
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
 
             var collectionModel = _mapper.Map<CollectionModel>(collection);
 
@@ -73,9 +71,9 @@ namespace CollectionManager.Controllers
                 try
                 {
                     var collectionEntity = _mapper.Map<Collection>(collectionModel);
-                    await _collectionRepository.CreateCollectionAsync(collectionEntity);
-                    await _collectionRepository.SaveAsync();
-                    _collectionRepository.UpdateSearchVector();
+                    await _unitOfWork.Collection.CreateCollectionAsync(collectionEntity);
+                    await _unitOfWork.Save();
+                    _unitOfWork.Collection.UpdateSearchVector();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -112,7 +110,7 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -137,14 +135,14 @@ namespace CollectionManager.Controllers
             {
                 try
                 {
-                    var collection = await _collectionRepository.GetCollectionAsync(id);
+                    var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
 
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
                     collection.Description = collectionModel.Description;
 
-                    await _collectionRepository.SaveAsync();
-                    _collectionRepository.UpdateSearchVector();
+                    await _unitOfWork.Save();
+                    _unitOfWork.Collection.UpdateSearchVector();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -181,7 +179,7 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -193,15 +191,15 @@ namespace CollectionManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
             if(collection == null)
             {
                 return NotFound();
             }
 
-            _collectionRepository.DeleteCollection(collection);
-            await _collectionRepository.SaveAsync();
-            _collectionRepository.UpdateSearchVector();
+            _unitOfWork.Collection.DeleteCollection(collection);
+            await _unitOfWork.Save();
+            _unitOfWork.Collection.UpdateSearchVector();
 
             TempData["ToastrMessage"] = "Successfully deleted collection";
             TempData["ToastrType"] = "success";
@@ -212,28 +210,28 @@ namespace CollectionManager.Controllers
         [HttpGet("{collectionId}/customfields")]
         public async Task<IActionResult> ManageCustomField(int collectionId)
         {
-            var collection = await _collectionRepository.GetCollectionWithCustomFieldAsync(collectionId);
+            var collection = await _unitOfWork.Collection.GetCollectionWithCustomFieldAsync(collectionId);
             var collectionModel = _mapper.Map<CollectionWithCustomFieldModel>(collection);
             return View(collectionModel);
         }
 
         private bool CollectionExists(int id)
         {
-            return _collectionRepository.IsCollectionExist(id);
+            return _unitOfWork.Collection.IsCollectionExist(id);
         }
 
         [HttpPost("customfields/add")]
         public async Task<IActionResult> AddCustomField([FromBody] CustomField customField)
         {
-            var existing = _collectionRepository.IsCustomFieldExist(customField);
+            var existing = _unitOfWork.Collection.IsCustomFieldExist(customField);
 
             if (existing == true)
             {
                 return BadRequest("Field already exist");
             }
 
-            await _collectionRepository.CreateCustomField(customField);
-            await _collectionRepository.SaveAsync();
+            await _unitOfWork.Collection.CreateCustomField(customField);
+            await _unitOfWork.Save();
             return Ok(new { Id = customField.Id });
         }
 
@@ -242,17 +240,17 @@ namespace CollectionManager.Controllers
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var deletePermisible = _collectionRepository.DoesUserHasCustomField(Id, userId);
+            var deletePermisible = _unitOfWork.Collection.DoesUserHasCustomField(Id, userId);
 
             if (!deletePermisible)
             {
                 return BadRequest();
             }
 
-            var field = await _collectionRepository.GetCustomFieldAsync(Id);
+            var field = await _unitOfWork.Collection.GetCustomFieldAsync(Id);
 
-            _collectionRepository.DeleteCustomField(field);
-            await _collectionRepository.SaveAsync();
+            _unitOfWork.Collection.DeleteCustomField(field);
+            await _unitOfWork.Save();
 
             return Ok(new { Id = field.Id });
         }
@@ -261,7 +259,7 @@ namespace CollectionManager.Controllers
         [Route("/collections/categories")]
         public async Task<IActionResult> GetCollectionCategories()
         {
-            var categories = await _collectionRepository.GetCollectionCategoriesAsync();
+            var categories = await _unitOfWork.Collection.GetCollectionCategoriesAsync();
             return Ok(categories);
         }
     }

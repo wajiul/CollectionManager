@@ -15,16 +15,12 @@ namespace CollectionManager.Controllers
     [Authorize]
     public class ProfileCollectionItemsController : Controller
     {
-        private readonly CollectionMangerDbContext _context;
-        private readonly CollectionRepository _collectionRepository;
-        private readonly ItemRepository _itemRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProfileCollectionItemsController(CollectionMangerDbContext context, CollectionRepository collectionRepository, ItemRepository itemRepository, IMapper mapper)
+        public ProfileCollectionItemsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
-            _collectionRepository = collectionRepository;
-            _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -33,7 +29,7 @@ namespace CollectionManager.Controllers
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collectionExist = _collectionRepository.IsCollectionExist(collectionId, userId);
+            var collectionExist = _unitOfWork.Collection.IsCollectionExist(collectionId, userId);
 
             if (!collectionExist)
             {
@@ -93,7 +89,7 @@ namespace CollectionManager.Controllers
         {
             var itemModel = new ItemModel();
             itemModel.CollectionId = collectionId;
-            itemModel.FieldValues = await _collectionRepository.GetCustomFieldsOfCollection(collectionId);
+            itemModel.FieldValues = await _unitOfWork.Collection.GetCustomFieldsOfCollection(collectionId);
 
             return View(itemModel);
 
@@ -107,28 +103,18 @@ namespace CollectionManager.Controllers
                 var item = _mapper.Map<Item>(newItem);
                 item.CreatedAt = DateTime.UtcNow;
 
-                await _context.items.AddAsync(item);
+                await _unitOfWork.Item.AddItemAsync(item);
 
                 var tags = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags).Select(t => new Tag
                 {
                     Name = t.Value
                 }).ToList();
 
-                foreach(var tag in tags)
-                {
-                    var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.Name == tag.Name);
-                    if(existingTag != null)
-                    {
-                        item.Tags.Add(existingTag);
-                    }
-                    else
-                    {
-                        item.Tags.Add(tag);
-                    }
-                }
+                await _unitOfWork.Item.AddTagsAsync(item, tags);
 
-                await _context.SaveChangesAsync();
-                _itemRepository.UpdateSearchVector();
+                await _unitOfWork.Save();
+
+                _unitOfWork.Item.UpdateSearchVector();
 
                 TempData["ToastrMessage"] = "Item created successfully";
                 TempData["ToastrType"] = "success";
@@ -142,7 +128,7 @@ namespace CollectionManager.Controllers
         [HttpGet("{id}/edit")]
         public async Task<IActionResult> Edit(int Id)
         {
-            var item = await _itemRepository.GetItemAsync(Id);
+            var item = await _unitOfWork.Item.GetItemAsync(Id);
             var itemModel = _mapper.Map<ItemModel>(item);
             return View(itemModel);
         }
@@ -157,7 +143,7 @@ namespace CollectionManager.Controllers
 
             if (ModelState.IsValid)
             {
-                var item = await _itemRepository.GetItemAsync(id);
+                var item = await _unitOfWork.Item.GetItemAsync(id);
 
                 if (item == null)
                 {
@@ -179,8 +165,8 @@ namespace CollectionManager.Controllers
 
                 foreach (var tag in tagsToAdd)
                 {
-                    var existingTag = await _context.tags.FirstOrDefaultAsync(x => x.Name == tag.Name);
-                    if(existingTag != null)
+                    var existingTag = await _unitOfWork.Item.GetTagAsync(tag.Name);
+                    if (existingTag != null)
                     {
                         item.Tags.Add(existingTag);
                     }
@@ -211,8 +197,8 @@ namespace CollectionManager.Controllers
                     }
                 }
 
-                await _context.SaveChangesAsync();
-                _itemRepository.UpdateSearchVector();
+                await _unitOfWork.Save();
+                _unitOfWork.Item.UpdateSearchVector();
 
                 TempData["ToastrMessage"] = "Item updated successfully";
                 TempData["ToastrType"] = "success";
@@ -226,7 +212,7 @@ namespace CollectionManager.Controllers
         [HttpGet("{id}/delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _itemRepository.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(id);
             if(item == null)
             {
                 return NotFound();
@@ -238,14 +224,14 @@ namespace CollectionManager.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var item = await _itemRepository.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(id);
             if(item == null)
             {
                 return NotFound();
             }
-            await _itemRepository.Delete(id);
-            await _itemRepository.SaveAsync();
-            _itemRepository.UpdateSearchVector();
+            await _unitOfWork.Item.Delete(id);
+            await _unitOfWork.Save();
+            _unitOfWork.Item.UpdateSearchVector();
 
             TempData["ToastrMessage"] = "Item deleted successfully";
             TempData["ToastrType"] = "success";
@@ -257,7 +243,7 @@ namespace CollectionManager.Controllers
         [Route("/tags")]
         public async Task<IActionResult> GetTags()
         {
-            var tags = await _itemRepository.GetTagsAsync();
+            var tags = await _unitOfWork.Item.GetTagsAsync();
             var tagStringList = tags.Select(x => x.Name).Distinct().ToList();
             return Ok(tagStringList);
         }

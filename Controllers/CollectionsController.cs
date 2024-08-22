@@ -21,17 +21,13 @@ namespace CollectionManager.Controllers
     [Route("collections")]
     public class CollectionsController : Controller
     {
-        private readonly CollectionRepository _collectionRepository;
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ItemRepository _itemRepository;
 
-        public CollectionsController(  CollectionRepository collectionRepository, UserManager<User> userManager, IMapper mapper, ItemRepository itemRepository)
+        public CollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _collectionRepository = collectionRepository;
-            _userManager = userManager;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _itemRepository = itemRepository;
         }
 
         [HttpGet("")]
@@ -47,7 +43,7 @@ namespace CollectionManager.Controllers
             {
                 return NotFound();
             }
-            var exist = _collectionRepository.IsCollectionExist(id.Value);
+            var exist = _unitOfWork.Collection.IsCollectionExist(id.Value);
 
             if (!exist)
             {
@@ -69,7 +65,7 @@ namespace CollectionManager.Controllers
         [Authorize]
         public async Task<IActionResult> Like([FromBody] LikeModel like)
         {
-            var liked = _itemRepository.IsUserLikedAsync(like.ItemId, like.UserId);
+            var liked = _unitOfWork.Item.IsUserLikedAsync(like.ItemId, like.UserId);
             if (liked)
             {
                 return BadRequest(new { Message = "Already liked" });
@@ -77,8 +73,8 @@ namespace CollectionManager.Controllers
 
             var likeEntity = _mapper.Map<Like>(like);
 
-            await _itemRepository.AddLikeAsync(likeEntity);
-            await _itemRepository.SaveAsync();
+            await _unitOfWork.Item.AddLikeAsync(likeEntity);
+            await _unitOfWork.Save();
 
             return Ok(new { Message = "Like added successfully" });
         }
@@ -92,7 +88,7 @@ namespace CollectionManager.Controllers
                 return NotFound();
             }
 
-            var isLiked = _itemRepository.IsUserLikedAsync(itemId.Value, userId);
+            var isLiked = _unitOfWork.Item.IsUserLikedAsync(itemId.Value, userId);
             return Ok(isLiked);
         }
 
@@ -105,19 +101,14 @@ namespace CollectionManager.Controllers
 
             try
             {
-                await _itemRepository.AddCommentAsync(commentEntity);
-                await _itemRepository.SaveAsync();
-
+                await _unitOfWork.Item.AddCommentAsync(commentEntity);
+                await _unitOfWork.Save();
             }
             catch (Exception)
             {
                 throw;
             }
-            return Ok(await _itemRepository.GetCommentAsync(commentEntity.Id));
+            return Ok(await _unitOfWork.Item.GetCommentAsync(commentEntity.Id));
         }
-
-        
-
-
     }
 }

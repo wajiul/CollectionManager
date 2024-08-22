@@ -94,7 +94,6 @@
 
             function initTagify() {
                 var input = document.getElementById('tags-input');
-                console.log('init-tags ', tagList);
                 var tagify = new Tagify(input, {
                     whitelist: tagList,
                     dropdown: {
@@ -112,7 +111,6 @@
                     contentType: 'application/json',
                     method: 'GET',
                     success: function (response) {
-                        console.log('tags ', response);
                         tagList = response;
                         initTagify();
 

@@ -15,22 +15,17 @@ namespace CollectionManager.Areas.Admin.Controllers
     [Authorize(Roles ="admin")]
     public class ManageUserCollectionItemsController : Controller
     {
-        private readonly CollectionRepository _collectionRepository;
-        private readonly ItemRepository _itemRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly CollectionMangerDbContext _context;
-
-        public ManageUserCollectionItemsController(CollectionRepository collectionRepository, ItemRepository itemRepository, IMapper mapper, CollectionMangerDbContext context)
+        public ManageUserCollectionItemsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _collectionRepository = collectionRepository;
-            _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _context = context;
         }
         [HttpGet("")]
         public IActionResult Index(int collectionId, string userId)
         {
-            var isExist = _collectionRepository.IsCollectionExist(collectionId, userId);
+            var isExist = _unitOfWork.Collection.IsCollectionExist(collectionId, userId);
             if (!isExist)
             {
                 return NotFound();
@@ -51,7 +46,7 @@ namespace CollectionManager.Areas.Admin.Controllers
         {
             var itemModel = new ItemModel();
             itemModel.CollectionId = collectionId;
-            itemModel.FieldValues = await _collectionRepository.GetCustomFieldsOfCollection(collectionId);
+            itemModel.FieldValues = await _unitOfWork.Collection.GetCustomFieldsOfCollection(collectionId);
 
             var userId = RouteData.Values["userId"].ToString();
             ViewData["UserId"] = userId;
@@ -67,27 +62,16 @@ namespace CollectionManager.Areas.Admin.Controllers
                 var item = _mapper.Map<Item>(newItem);
                 item.CreatedAt = DateTime.UtcNow;
 
-                await _context.items.AddAsync(item);
+                await _unitOfWork.Item.AddItemAsync(item);
 
                 var tags = JsonConvert.DeserializeObject<List<TagValue>>(newItem.Tags).Select(t => new Tag
                 {
                     Name = t.Value
                 }).ToList();
 
-                foreach (var tag in tags)
-                {
-                    var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.Name == tag.Name);
-                    if (existingTag != null)
-                    {
-                        item.Tags.Add(existingTag);
-                    }
-                    else
-                    {
-                        item.Tags.Add(tag);
-                    }
-                }
+                await _unitOfWork.Item.AddTagsAsync(item, tags);
 
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
 
                 TempData["ToastrMessage"] = "Item created successfully";
                 TempData["ToastrType"] = "success";
@@ -102,7 +86,7 @@ namespace CollectionManager.Areas.Admin.Controllers
         [HttpGet("{id}/edit")]
         public async Task<IActionResult> Edit(int Id, string userId)
         {
-            var item = await _itemRepository.GetItemAsync(Id);
+            var item = await _unitOfWork.Item.GetItemAsync(Id);
             var itemModel = _mapper.Map<ItemModel>(item);
             ViewData["UserId"] = userId;
             return View(itemModel);
@@ -118,7 +102,7 @@ namespace CollectionManager.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var item = await _itemRepository.GetItemAsync(id);
+                var item = await _unitOfWork.Item.GetItemAsync(id);
 
                 if (item == null)
                 {
@@ -141,7 +125,15 @@ namespace CollectionManager.Areas.Admin.Controllers
 
                 foreach (var tag in tagsToAdd)
                 {
-                    item.Tags.Add(tag);
+                    var existingTag = await _unitOfWork.Item.GetTagAsync(tag.Name);
+                    if (existingTag != null)
+                    {
+                        item.Tags.Add(existingTag);
+                    }
+                    else
+                    {
+                        item.Tags.Add(tag);
+                    }
                 }
 
                 foreach (var tag in tagsToRemove)
@@ -165,7 +157,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                     }
                 }
 
-                await _itemRepository.SaveAsync();
+                await _unitOfWork.Save();
 
                 var userId = RouteData.Values["userId"].ToString();
 
@@ -178,7 +170,7 @@ namespace CollectionManager.Areas.Admin.Controllers
         [HttpGet("{id}/delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _itemRepository.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(id);
             if (item == null)
             {
                 return NotFound();
@@ -194,13 +186,13 @@ namespace CollectionManager.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var item = await _itemRepository.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
-            await _itemRepository.Delete(id);
-            await _itemRepository.SaveAsync();
+            await  _unitOfWork.Item.Delete(id);
+            await _unitOfWork.Save();
             var userId = RouteData.Values["userId"].ToString();    
             return RedirectToAction("Index", new {collectionId = item.CollectionId, userId = userId});
         }

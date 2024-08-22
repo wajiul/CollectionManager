@@ -10,11 +10,6 @@ namespace CollectionManager.Controllers
     [Authorize]
     public class ProfileController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        public ProfileController(UserManager<User> userManager)
-        {
-            _userManager = userManager;
-        }
 
         [HttpGet("my")]
         public IActionResult MyProfile()

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace CollectionManager.Data_Access.Repositories
 {
-    public class CollectionRepository
+    public class CollectionRepository : ICollectionRepository
     {
         private readonly CollectionMangerDbContext _context;
 
@@ -28,9 +28,9 @@ namespace CollectionManager.Data_Access.Repositories
                      ItemCount = c.Items.Count,
                  })
                  .ToListAsync();
-        } 
+        }
 
-        
+
         public async Task<IEnumerable<CollectionWithItemCountModel>> GetUserCollectionsAsync(string userId)
         {
             return await _context.collections
@@ -177,7 +177,7 @@ namespace CollectionManager.Data_Access.Repositories
         }
         public void DeleteCustomField(CustomField customField)
         {
-            _context.customFields .Remove(customField);
+            _context.customFields.Remove(customField);
         }
 
         public void UpdateSearchVector()

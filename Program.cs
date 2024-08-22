@@ -17,8 +17,8 @@ builder.Services.AddDbContext<CollectionMangerDbContext>(options =>
 });
 
 builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<CollectionMangerDbContext>();
-builder.Services.AddScoped<CollectionRepository>();
-builder.Services.AddScoped<ItemRepository>();
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSignalR();
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>

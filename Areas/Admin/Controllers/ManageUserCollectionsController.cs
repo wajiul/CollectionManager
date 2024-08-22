@@ -14,12 +14,12 @@ namespace CollectionManager.Areas.Admin.Controllers
     [Authorize(Roles = "admin")]
     public class ManageUserCollectionsController : Controller
     {
-        private readonly CollectionRepository _collectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ManageUserCollectionsController(CollectionRepository collectionRepository, IMapper mapper)
+        public ManageUserCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _collectionRepository = collectionRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -34,14 +34,14 @@ namespace CollectionManager.Areas.Admin.Controllers
         public async Task<IActionResult> Details(int id, string userId)
         {
 
-            var collectionExist = _collectionRepository.IsCollectionExist(id, userId);
+            var collectionExist = _unitOfWork.Collection.IsCollectionExist(id, userId);
 
             if (!collectionExist)
             {
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
 
             var collectionModel = _mapper.Map<CollectionModel>(collection);
 
@@ -67,8 +67,8 @@ namespace CollectionManager.Areas.Admin.Controllers
                 try
                 {
                     var collectionEntity = _mapper.Map<Collection>(collectionModel);
-                    await _collectionRepository.CreateCollectionAsync(collectionEntity);
-                    await _collectionRepository.SaveAsync();
+                    await _unitOfWork.Collection.CreateCollectionAsync(collectionEntity);
+                    await _unitOfWork.Save();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -105,7 +105,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -130,13 +130,13 @@ namespace CollectionManager.Areas.Admin.Controllers
             {
                 try
                 {
-                    var collection = await _collectionRepository.GetCollectionAsync(id);
+                    var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
 
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
                     collection.Description = collectionModel.Description;
 
-                    await _collectionRepository.SaveAsync();
+                    await _unitOfWork.Save();
                 }
                 catch (DbUpdateException ex)
                 {
@@ -173,7 +173,7 @@ namespace CollectionManager.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -185,15 +185,15 @@ namespace CollectionManager.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var collection = await _collectionRepository.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
 
             if (collection == null)
             {
                 return NotFound();
             }
 
-            _collectionRepository.DeleteCollection(collection);
-            await _collectionRepository.SaveAsync();
+            _unitOfWork.Collection.DeleteCollection(collection);
+            await _unitOfWork.Save();
 
             TempData["ToastrMessage"] = "Successfully deleted collection";
             TempData["ToastrType"] = "success";
@@ -206,45 +206,45 @@ namespace CollectionManager.Areas.Admin.Controllers
         [HttpGet("{collectionId}/customfields")]
         public async Task<IActionResult> ManageCustomField(int collectionId, string userId)
         {
-            var collection = await _collectionRepository.GetCollectionWithCustomFieldAsync(collectionId);
+            var collection = await _unitOfWork.Collection.GetCollectionWithCustomFieldAsync(collectionId);
             var collectionModel = _mapper.Map<CollectionWithCustomFieldModel>(collection);
             return View(collectionModel);
         }
 
         private bool CollectionExists(int id)
         {
-            return _collectionRepository.IsCollectionExist(id);
+            return _unitOfWork.Collection.IsCollectionExist(id);
         }
 
         [HttpPost("customfields/add")]
         public async Task<IActionResult> AddCustomField([FromBody] CustomField customField)
         {
-            var existing = _collectionRepository.IsCustomFieldExist(customField);
+            var existing = _unitOfWork.Collection.IsCustomFieldExist(customField);
 
             if (existing == true)
             {
                 return BadRequest("Field already exist");
             }
 
-            await _collectionRepository.CreateCustomField(customField);
-            await _collectionRepository.SaveAsync();
+            await _unitOfWork.Collection.CreateCustomField(customField);
+            await _unitOfWork.Save();
             return Ok(new { Id = customField.Id });
         }
 
         [HttpDelete("customfields/delete/{id}")]
         public async Task<IActionResult> DeleteCustomField(int Id, string userId)
         {
-            var deletePermisible = _collectionRepository.DoesUserHasCustomField(Id, userId);
+            var deletePermisible = _unitOfWork.Collection.DoesUserHasCustomField(Id, userId);
 
             if (!deletePermisible)
             {
                 return BadRequest();
             }
 
-            var field = await _collectionRepository.GetCustomFieldAsync(Id);
+            var field = await _unitOfWork.Collection.GetCustomFieldAsync(Id);
 
-            _collectionRepository.DeleteCustomField(field);
-            await _collectionRepository.SaveAsync();
+            _unitOfWork.Collection.DeleteCustomField(field);
+            await _unitOfWork.Save();
 
             return Ok(new { Id = field.Id });
         }

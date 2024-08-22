@@ -12,14 +12,12 @@ namespace CollectionManager.Controllers
     [Route("account")]
     public class AccountController : Controller
     {
-        private readonly CollectionMangerDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(CollectionMangerDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _signInManager = signInManager;
-            _context = context;
             _userManager = userManager;
         }
         [HttpGet("login")]

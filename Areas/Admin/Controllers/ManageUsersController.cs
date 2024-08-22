@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CollectionManager.Enums;
 using Microsoft.AspNetCore.Authorization;
+using CollectionManager.Data_Access.Repositories;
 
 namespace CollectionManager.Areas.Admin.Controllers
 {
@@ -14,13 +15,11 @@ namespace CollectionManager.Areas.Admin.Controllers
     [Authorize(Roles = "admin")]
     public class ManageUsersController : Controller
     {
-        private readonly CollectionMangerDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         const string admin = "admin";
-        public ManageUsersController(CollectionMangerDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public ManageUsersController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
         }
