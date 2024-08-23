@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-start row mt-2">
         <div class="col">
             <div class="card bg-white rounded-0 border-0 min_width-567">
-                <div class="card-header py-0 bg-info text-white rounded-5">Collection details</div>
+                <div class="card-header py-0 bg-info text-white rounded-5">@Resource.Collection @Resource.Details</div>
                 <div class="card-body" style="font-size:14px;">
                     <div class="row  mb-1">
                         <div class="col-md-2">Name:</div>
@@ -34,28 +34,28 @@
                 asp-route-collectionId="@Model.Id"
                 asp-route-userId="@userId"
                 class="btn btn-primary px-4 mb-2">
-                Add Item
+                @Resource.AddItem
             </a>
 
         }
         else if(action)
         {
-            <a asp-action="Create" asp-controller="ProfileCollectionItems" asp-route-collectionId="@Model.Id" class="btn btn-primary px-4 mb-2">Add Item</a>
+            <a asp-action="Create" asp-controller="ProfileCollectionItems" asp-route-collectionId="@Model.Id" class="btn btn-primary px-4 mb-2">@Resource.AddItem</a>
         }
     </div>
     <div class="card shadow min_width-567">
         <div class="card-header bg-primary text-white position-relative">
-            <h1 class="text-center">Items</h1>
+            <h1 class="text-center">@Resource.Items</h1>
         </div>
         <div class="card-body">
        <table id="itemList" class="table table-sm table-striped text-center" style="font-size:15px;">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Tags</th>
-                <th>Likes</th>
-                <th>Comments</th>
-                <th></th>
+                        <th>@Resource.Name</th>
+                        <th>@Resource.Tags</th>
+                        <th>@Resource.Likes</th>
+                        <th>@Resource.Comments</th>
+                        <th></th>
             </tr>
         </thead>
         <tbody>
@@ -99,8 +99,7 @@
                                   asp-controller="Collections" 
                                   asp-route-collectionId="@Model.Id" 
                                   asp-route-id="@item.Id" 
-                                  class="btn btn-outline-info"
-                              >Details</a>
+                                  class="btn btn-outline-info">@Resource.Details</a>
                               
                          </td>
                     }

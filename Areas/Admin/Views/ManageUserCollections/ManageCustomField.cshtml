@@ -1,13 +1,13 @@
 ﻿@model CollectionWithCustomFieldModel
 <div class="ms-3" style="font-size:13px;">
-    <a href="javascript:history.back()">back to collections</a>
+    <a href="javascript:history.back()">@Resource.Backtocollections</a>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h1 class="text-center">Manage Custom Field</h1>
+                <h1 class="text-center">@Resource.ManageCustomField</h1>
             </div>
             <div class="card-body">
                 <div class="row justify-content-center">
@@ -41,7 +41,7 @@
                                     <option value="3">Boolean</option>
                                     <option value="4">Date</option>
                                 </select>
-                                <button id="addCustomField" class="btn btn-primary">Add</button>
+                                <button id="addCustomField" class="btn btn-primary">@Resource.Add</button>
                             </div>
                         </form>
                     </div>

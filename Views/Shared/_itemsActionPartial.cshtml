@@ -13,7 +13,7 @@
     asp-route-id="@Id"
     class="btn btn-sm btn-outline-info"
 >
-    Details
+    @Resource.Details
 </a>
 
 <a 
@@ -23,7 +23,7 @@
     asp-route-collectionId="@CollectionId"
     class="btn btn-sm btn-outline-secondary"
 >
-    Edit
+    @Resource.Edit
 </a>
 
 <a asp-action="Delete"
@@ -32,7 +32,7 @@
    asp-route-collectionId="@CollectionId"
    class="btn btn-sm btn-outline-danger"
 >
-   Delete
+    @Resource.Delete
 </a>
 
 

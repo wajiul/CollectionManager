@@ -3,7 +3,7 @@
 <div class="container">
     <div class="ms-3">
         <a asp-action="Index" asp-controller="Collections" style="font-size:13px;">
-            <span><</span>Collections
+            <span><</span>@Resource.Collections
         </a>
     </div>
     @await Component.InvokeAsync("CollectionItems", new { collectionId = @Model, displayAction = false })

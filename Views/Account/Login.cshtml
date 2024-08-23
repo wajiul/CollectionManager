@@ -7,7 +7,7 @@
 <div class="container" style="min-height:80vh;">
     <div class="row mt-5">
         <div class="card shadow p-0 ms-auto me-auto" style="width: 25rem;">
-            <div class="card-header text-center text-white bg-primary fs-2">Login</div>
+            <div class="card-header text-center text-white bg-primary fs-2">@Resource.Login</div>
             <div class="card-body p-3">
                 <form method="post" asp-action="Login" asp-controller="Account">
                         <div asp-validation-summary="ModelOnly" class="error-message"></div>
@@ -25,7 +25,7 @@
                             <input asp-for="RememberMe" class="form-check-input">
                             <label asp-for="RememberMe"></label>
                         </div>
-                        <button class="btn btn-primary py-2 w-100">Submit</button>
+                        <button class="btn btn-primary py-2 w-100">@Resource.Submit</button>
                 </form>
             </div>
     </div>

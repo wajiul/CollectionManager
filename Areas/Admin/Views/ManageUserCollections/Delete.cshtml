@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="card shadow">
                 <div class="card-header bg-warning text-white">
-                    <h1 class="text-center">Are you sure ?</h1>
+                    <h1 class="text-center">@Resource.Areyousure?</h1>
                 </div>
                 <div class="card-body">
 
@@ -46,8 +46,10 @@
                         <form asp-action="DeleteConfirmed" asp-route-userId="@Model.UserId">
                             <input type="hidden" asp-for="Id" />
                             <div class="d-flex flex-column flex-sm-row gap-1 justify-content-center align-items-center">
-                                <button type="submit" class="btn btn-danger w-50">Delete</button>
-                                <a asp-action="Index" asp-controller="ManageUserCollections" asp-route-userId="@Model.UserId" class="btn btn-dark w-50">Back To List</a>
+                                <button type="submit" class="btn btn-danger w-50">@Resource.Delete</button>
+                                <a asp-action="Index" asp-controller="ManageUserCollections" asp-route-userId="@Model.UserId" class="btn btn-dark w-50">
+                                    @Resource.BackToList
+                                </a>
                             </div>
                         </form>
                     </div>

@@ -7,7 +7,7 @@
 <div class="container" style="min-height:80vh;">
     <div class="row justify-content-center mt-5">
         <div class="col-12 col-md-5 card p-0 shadow">
-            <div class="card-header text-center text-white bg-primary fs-2">SignUp</div>
+            <div class="card-header text-center text-white bg-primary fs-2">@Resource.SignUp</div>
             <div class="card-body p3">
                 <form method="post" asp-action="SignUp" asp-controller="Account">
                         <div asp-validation-summary="ModelOnly" class="error-message"></div>
@@ -36,7 +36,7 @@
                             <label asp-for="ConfirmPassword"></label>
                             <span asp-validation-for="ConfirmPassword" class="error-message"></span>
                         </div>
-                        <button class="btn btn-primary py-2 w-100">Submit</button>
+                    <button class="btn btn-primary py-2 w-100">@Resource.Submit</button>
                 </form>
             </div>
         </div>

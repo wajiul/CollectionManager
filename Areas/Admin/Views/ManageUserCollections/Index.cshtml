@@ -8,7 +8,7 @@
 
 <div class="container">
     <div>
-        <a asp-action="Create" asp-controller="ManageUserCollections" asp-route-userId="@userId" class="btn btn-primary px-5 rounded-0">Create New</a>
+        <a asp-action="Create" asp-controller="ManageUserCollections" asp-route-userId="@userId" class="btn btn-primary px-5 rounded-0">@Resource.CreateNew</a>
     </div>
     @await Component.InvokeAsync("Collections", new { userId = @userId, displayAction = true, displayAuthor = false, isAdmin = true})
 </div>

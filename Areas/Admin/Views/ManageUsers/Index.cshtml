@@ -3,16 +3,16 @@
 <div class="container">
     <div class="card shadow bordered" style="min-width:768px;">
         <div class="header bg-primary">
-            <h1 class="text-white text-center">Users</h1>
+            <h1 class="text-white text-center">@Resource.Users</h1>
         </div>
         <div class="card-body">
             <form asp-action="PerformAdminAction" method="post">
                 <div class="mb-2">
-                    <button class="btn btn-sm btn-primary" type="submit" name="operation" value="block">Block</button>
-                    <button class="btn btn-sm btn-outline-primary" type="submit" name="operation" value="unblock">Unblock</button>
-                    <button class="btn btn-sm btn-danger" type="submit" name="operation" value="delete">Delete</button>
-                    <button class="btn btn-sm btn-info" type="submit" name="operation" value="add_to_admin">Add to admin</button>
-                    <button class="btn btn-sm btn-outline-info" type="submit" name="operation" value="remove_from_admin">Remove from admin</button>
+                    <button class="btn btn-sm btn-primary" type="submit" name="operation" value="block">@Resource.Block</button>
+                    <button class="btn btn-sm btn-outline-primary" type="submit" name="operation" value="unblock">@Resource.Unblock</button>
+                    <button class="btn btn-sm btn-danger" type="submit" name="operation" value="delete">@Resource.Delete</button>
+                    <button class="btn btn-sm btn-info" type="submit" name="operation" value="add_to_admin">@Resource.AddToAdmin</button>
+                    <button class="btn btn-sm btn-outline-info" type="submit" name="operation" value="remove_from_admin">@Resource.RemoveFromAdmin</button>
 
                 </div>
                 <table class="table table-responsive-md table-striped text-center w-100" id="userList">
@@ -21,11 +21,11 @@
                         <td>
                             <input id="selectAll" class="form-check" type="checkbox"/>
                         </td>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Is Admin</th>
+                            <th>@Resource.Id</th>
+                            <th>@Resource.Name</th>
+                            <th>@Resource.Email</th>
+                            <th>@Resource.Status</th>
+                            <th>@Resource.IsAdmin</th>
                     </tr>
                 </thead>
                 <tbody>

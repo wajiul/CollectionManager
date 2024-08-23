@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-start row">
         <div class="col-md-10">
             <div class="card bg-white rounded-0 border-0">
-                <div class="card-header py-0 bg-info text-white fs-5 rounded-5">Item details</div>
+                <div class="card-header py-0 bg-info text-white fs-5 rounded-5">@Resource.Item @Resource.Details</div>
                 <div class="card-body" style="font-size:15px;">
                     <div class="row mb-1">
                         <div class="col-md-2">Name:</div>
@@ -82,13 +82,13 @@
                                 class="btn px-4 py-2 shadow-none" 
                                 id="likeButton">
                                 <i class="bi bi-hand-thumbs-up me-1"></i>
-                                Like
+                                @Resource.Like
                             </button>
                             <button 
                                 class="btn px-4 py-2 shadow-none"
                                 id="comment-inputButton">
                                 <i class="bi bi-chat me-1"></i>
-                                Comment
+                                @Resource.Comment
                             </button>
                         </div>
                     }
@@ -122,14 +122,15 @@
                             id="commentButton"
                             class="btn btn-info btn-sm shadow-none"
                             type="button" 
-                            disabled
-                            >Post comment</button>
+                            disabled>
+                            @Resource.Postcomment
+                        </button>
                             <button
                             class="btn btn-outline-secondary btn-sm ml-1 shadow-none"
                             type="button"
                             id="comment-cancel"
                             >
-                            Cancel
+                            @Resource.Cancel
                             </button>
                      </div>
                 </div>

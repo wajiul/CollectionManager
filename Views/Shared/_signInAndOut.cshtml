@@ -6,13 +6,13 @@
         <a class="d-inline" asp-controller="ProfileCollections" asp-action="Index">
             @User.Identity.Name
          </a> |
-        <a class="d-inline" asp-controller="Account" asp-action="SignOut">Logout</a>
+        <a class="d-inline" asp-controller="Account" asp-action="SignOut">@Resource.Logout</a>
     </div>
 }
 else
 {
     <div>
-        <a class="d-inline" asp-controller="Account" asp-action="Login">Login</a> | 
-        <a class="d-inline" asp-controller="Account" asp-action="SignUp">SignUp</a>
+        <a class="d-inline" asp-controller="Account" asp-action="Login">@Resource.Login</a> |
+        <a class="d-inline" asp-controller="Account" asp-action="SignUp">@Resource.SignUp</a>
     </div>
 }

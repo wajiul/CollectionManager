@@ -30,7 +30,7 @@ header #searchBox {
 
 
 
-@media (max-width: 992px) {
+@media (max-width: 991px) {
     header #searchBox {
         width: 100%;
     }

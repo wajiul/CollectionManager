@@ -2,7 +2,7 @@
 
 <div class="ms-3">
     <a asp-action="Index" asp-controller="ProfileCollections" style="font-size:13px;">
-        <span><</span>Collections
+        <span><</span>@Resource.Collections
     </a>
 </div>
 
@@ -10,7 +10,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h1 class="text-center">Manage Custom Field</h1>
+                <h1 class="text-center">@Resource.ManageCustomField</h1>
             </div>
             <div class="card-body">
                 <div class="row justify-content-center">
@@ -44,7 +44,7 @@
                                     <option value="3">Boolean</option>
                                     <option value="4">Date</option>
                                 </select>
-                                <button id="addCustomField" class="btn btn-primary">Add</button>
+                                <button id="addCustomField" class="btn btn-primary">@Resource.Add</button>
                             </div>
                         </form>
                     </div>

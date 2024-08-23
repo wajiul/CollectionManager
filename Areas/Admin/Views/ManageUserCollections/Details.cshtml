@@ -5,7 +5,7 @@
 }
 
 <div>
-    <h4>Collection</h4>
+    <h4>@Resource.Collection</h4>
     <hr />
     <dl class="row gx-4">
         <dt class="col-sm-2">
@@ -29,6 +29,6 @@
     </dl>
 </div>
 <div class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">@Resource.Edit</a> |
+    <a asp-action="Index">@Resource.BackToList</a>
 </div>

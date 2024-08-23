@@ -1,14 +1,14 @@
 ﻿
 <div class="container">
-    <h1 class="text-primary text-center mb-4">Recently Added Items</h1>
+    <h1 class="text-primary text-center mb-4">@Resource.RecentlyAddedItems</h1>
     @await Component.InvokeAsync("RecentlyAddedItems")
     <br />
     <br />
-    <h1 class="text-primary text-center mb-4">Top 5 Largest Collections</h1>
+    <h1 class="text-primary text-center mb-4">@Resource.Top5LargestCollections</h1>
     @await Component.InvokeAsync("TopCollections")
     <br />
     <br />
-    <h1 class="text-primary text-center mb-4">Tags</h1>
+    <h1 class="text-primary text-center mb-4">@Resource.Tags</h1>
     @await Component.InvokeAsync("TagCloud")
     <br />
 </div>

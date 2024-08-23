@@ -32,29 +32,50 @@
     <div class="collapse navbar-collapse" id="navbarColor04">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+          <a class="nav-link" asp-controller="Home" asp-action="Index">
+              @Resource.Home
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" asp-action="Index" asp-controller="Collections">Collections</a>
+             <a class="nav-link" asp-action="Index" asp-controller="Collections">@Resource.Collections</a>
         </li>
-  
+        @if (signInManager.IsSignedIn(User) && User.IsInRole("admin"))
+        {
+            <li class="nav-item">
+                 <a class="nav-link text-info" asp-action="Index" asp-controller="ManageUsers" asp-area="admin">@Resource.AdminPanel</a>
+            </li>
+        }
       </ul>
 
-      <form id="searchBox" asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm">
-          <input type="text" name="query" class="form-control shadow-none" placeholder="Search">
-          <button class="input-group-text"><i class="bi bi-search"></i></button>
-      </form>
+      
 
-    @if(signInManager.IsSignedIn(User) && User.IsInRole("admin"))
-    {                 
-       <div class="ms-lg-3 mt-md-2 text-info">
-          <a class="nav-link" asp-action="Index" asp-controller="ManageUsers" asp-area="admin">Admin panel</a>
-      </div>  
-    }
+   
 
-      <div class="ms-lg-3 mt-md-2">
+    <div class="dropdown px-0">
+        <a class="text-decoration-none dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            @if (Thread.CurrentThread.CurrentCulture.ToString() == "en")
+            {
+                <span>English</span>
+            }
+            else
+            {
+                <span>Russian</span>
+            }
+                        </a>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" asp-action="Language" asp-controller="Home" asp-route-lang="en">English</a></li>
+            <li><a class="dropdown-item" asp-action="Language" asp-controller="Home" asp-route-lang="ru">Russian</a></li>
+        </ul>
+    </div>
+
+      <div class="ms-lg-3">
         <partial name="_signInAndOut"/>
       </div>
+
+    <form id="searchBox" asp-action="Index" asp-controller="Search" method="get" class="input-group input-group-sm ms-lg-4 mt-2 mt-lg-0">
+         <input type="text" name="query" class="form-control shadow-none" placeholder="@Resource.Search">
+        <button class="input-group-text"><i class="bi bi-search"></i></button>
+    </form>
 
     </div>
   </div>
@@ -69,7 +90,7 @@
     <footer class="border-top text-muted">
         <div class="container text-center">
             <p class="mb-0 pb-0">&copy; 2024 - Collection Manager(CM)</p>
-            <p id="developer">Developed by Owajeul</p>
+            <p id="developer">@Resource.Developer</p>
         </div>
     </footer>
 

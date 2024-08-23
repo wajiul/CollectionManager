@@ -1,4 +1,5 @@
 using CollectionManager.Models;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -18,6 +19,28 @@ namespace CollectionManager.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet("language/{lang}")]
+        public IActionResult Language(string lang)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(lang)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            // Get the URL the user came from
+            var returnUrl = Request.Headers["Referer"].ToString();
+
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                // Redirect to the previous URL
+                return Redirect(returnUrl);
+            }
+
+            // If no referrer, fall back to a default action, e.g., Index
+            return RedirectToAction(nameof(Index));
         }
 
 

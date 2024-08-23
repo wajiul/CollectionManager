@@ -1,12 +1,12 @@
 ﻿@model SearchResultModel
-<h2 class="text-center text-primary mb-3">Search Result</h2>
+<h2 class="text-center text-primary mb-3">@Resource.SearchResult</h2>
 
 <div class="container">
     <div class="d-flex justify-content-center row">
         @if(Model.Items.Count == 0 && Model.Collections.Count == 0)
         {
             <div class="d-flex justify-content-center align-items-center" style="height:80vh;">
-                <h3 class="text-dark">No result found</h3>
+                <h3 class="text-dark">@Resource.Noresultfound</h3>
             </div>
         }
         <div class="col-md-9">
@@ -14,7 +14,7 @@
             {
                 <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
                     <div class="card-body p-2">
-                        <div class="text-warning" style="font-size:12px;">[Item]</div>
+                        <div class="text-warning" style="font-size:12px;">[@Resource.Item]</div>
                         <div>
                             <p class="text-black-50 text-truncate mb-0">
                                 <span class="text-info me-1">Name:</span>
@@ -57,7 +57,7 @@
             {
                 <div class="card bg-white rounded-0 mb-2" style="font-size: 14px;">
                     <div class="card-body p-2">
-                        <div class="text-warning" style="font-size:12px;">[Collection]</div>
+                        <div class="text-warning" style="font-size:12px;">[@Resource.Collection]</div>
                         <div>
                             <p class="text-black-50 text-truncate mb-0">
                                 <span class="text-info me-1">Name:</span>
