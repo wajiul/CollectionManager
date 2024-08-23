@@ -25,9 +25,25 @@
                     </div>
                     @foreach (var field in Model.FieldValues)
                     {
+
                         <div class="row mb-1">
                             <div class="col-md-2">@field.Name:</div>
-                            <div class="col-md-10">@field.Value</div>
+
+                            @if(field.Type == CustomFieldType.Boolean)
+                            {
+                                @if(field.Value.ToLower() == "on")
+                                {
+                                    <div class="col-md-10">Yes</div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-10">No</div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-md-10">@field.Value</div>
+                            }
                         </div>
                     }
 

@@ -52,17 +52,12 @@
                                         }
                                         else if (field.Type == CustomFieldType.Boolean)
                                         {
-                                            bool isChecked;
-                                            bool parseResult = bool.TryParse(Model.FieldValues[i].Value, out isChecked);
-                                            if (!parseResult)
-                                            {
-                                                isChecked = false;
-                                            }
+                                            
                                             <input type="checkbox"
                                                    class="form-check-input ms-2"
-                                                   value="true"
+                                                   id="FieldValues_@(i)__Value"
                                                    name="FieldValues[@i].Value"
-                                            @(isChecked ? "checked" : "") />
+                                            />
                                         }
                                         else if (field.Type == CustomFieldType.Date)
                                         {

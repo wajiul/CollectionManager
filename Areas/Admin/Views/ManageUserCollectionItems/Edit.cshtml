@@ -55,15 +55,13 @@
                                     }
                                     else if (field.Type == CustomFieldType.Boolean)
                                     {
-                                        bool isChecked;
-                                        bool parseResult = bool.TryParse(Model.FieldValues[i].Value, out isChecked);
-                                        if (!parseResult)
+                                        bool isChecked = false;
+                                        if (Model.FieldValues[i].Value.ToLower() == "on")
                                         {
-                                            isChecked = false;
+                                            isChecked = true;
                                         }
                                         <input type="checkbox"
                                                class="form-check-input ms-2"
-                                               value="true"
                                                name="FieldValues[@i].Value"
                                         @(isChecked ? "checked" : "") />
                                     }

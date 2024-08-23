@@ -28,6 +28,14 @@ header #searchBox {
     width: 15rem;
 }
 
+button:focus,
+button:active,
+.btn:focus,
+.btn:active {
+    outline: none;
+    box-shadow: none;
+}
+
 
 
 @media (max-width: 991px) {
