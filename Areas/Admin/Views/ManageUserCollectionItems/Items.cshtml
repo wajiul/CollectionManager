@@ -1,9 +1,7 @@
 ﻿@model int 
 
 <div class="container">
-    <div class="ms-3" style="font-size:13px;">
-        <a href="javascript:history.back()">@Resource.Backtoitems</a>
-    </div>
+   
     @await Component.InvokeAsync("Item", new {Id = @Model})
 </div>
 

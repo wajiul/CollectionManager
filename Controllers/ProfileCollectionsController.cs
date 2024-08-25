@@ -32,20 +32,20 @@ namespace CollectionManager.Controllers
             return View();
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
+        [HttpGet("{collectionId}")]
+        public async Task<IActionResult> Details(int collectionId)
         {
 
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collectionExist = _unitOfWork.Collection.IsCollectionExist(id, userId);
+            var collectionExist = _unitOfWork.Collection.IsCollectionExist(collectionId, userId);
 
             if (!collectionExist)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId);
 
             var collectionModel = _mapper.Map<CollectionModel>(collection);
 
@@ -102,15 +102,15 @@ namespace CollectionManager.Controllers
             return View(collectionModel);
         }
 
-        [HttpGet("edith/{id}")]
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet("edith/{collectionId}")]
+        public async Task<IActionResult> Edit(int? collectionId)
         {
-            if (id == null)
+            if (collectionId == null)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -122,11 +122,11 @@ namespace CollectionManager.Controllers
         }
 
 
-        [HttpPost("edith/{id}")]
+        [HttpPost("edith/{collectionId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CollectionModel collectionModel)
+        public async Task<IActionResult> Edit(int collectionId, CollectionModel collectionModel)
         {
-            if (id != collectionModel.Id)
+            if (collectionId != collectionModel.Id)
             {
                 return NotFound();
             }
@@ -135,7 +135,7 @@ namespace CollectionManager.Controllers
             {
                 try
                 {
-                    var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
+                    var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId);
 
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
@@ -171,15 +171,15 @@ namespace CollectionManager.Controllers
             return View(collectionModel);
         }
 
-        [HttpGet("{id}/delete")]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet("{collectionId}/delete")]
+        public async Task<IActionResult> Delete(int? collectionId)
         {
-            if (id == null)
+            if (collectionId == null)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId.Value);
             if (collection == null)
             {
                 return NotFound();

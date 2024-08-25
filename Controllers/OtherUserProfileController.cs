@@ -5,26 +5,26 @@ namespace CollectionManager.Controllers
     [Route("profile/{userId}/collections")]
     public class OtherUserProfileController : Controller
     {
-        [HttpGet("{id}")]
-        public IActionResult Index(int? id, string? userId)
+        [HttpGet("{collectionId}")]
+        public IActionResult Index(int? collectionId, string? userId)
         {
-            if(id == null || userId == null)
+            if(collectionId == null || userId == null)
             {
                 return NotFound();
             }
             ViewData["UserId"] = userId;
-            return View(id.Value);
+            return View(collectionId.Value);
         }
 
-        [HttpGet("{collectionId}/items/{id}")]
-        public IActionResult Items(int? id, string? userId)
+        [HttpGet("{collectionId}/items/{itemId}")]
+        public IActionResult Items(int? itemId, string? userId)
         {
-            if(id == null)
+            if(itemId == null)
             {
                 return NotFound();
             }
             ViewData["UserId"] = userId;
-            return View(id.Value);
+            return View(itemId.Value);
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace CollectionManager.Areas.Admin.Controllers
 {
     [Area("admin")]
-    [Route("admin/users/{userId}/collections")]
+    [Route("admin/{userId}/collections")]
     [Authorize(Roles = "admin")]
     public class ManageUserCollectionsController : Controller
     {
@@ -30,18 +30,18 @@ namespace CollectionManager.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id, string userId)
+        [HttpGet("{collectonId}")]
+        public async Task<IActionResult> Details(int collectionId, string userId)
         {
 
-            var collectionExist = _unitOfWork.Collection.IsCollectionExist(id, userId);
+            var collectionExist = _unitOfWork.Collection.IsCollectionExist(collectionId, userId);
 
             if (!collectionExist)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId);
 
             var collectionModel = _mapper.Map<CollectionModel>(collection);
 
@@ -98,15 +98,15 @@ namespace CollectionManager.Areas.Admin.Controllers
             return View(collectionModel);
         }
 
-        [HttpGet("edith/{id}")]
-        public async Task<IActionResult> Edit(int? id, string userId)
+        [HttpGet("edith/{collectionId}")]
+        public async Task<IActionResult> Edit(int? collectionId, string userId)
         {
-            if (id == null)
+            if (collectionId == null)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId.Value);
             if (collection == null)
             {
                 return NotFound();
@@ -118,11 +118,11 @@ namespace CollectionManager.Areas.Admin.Controllers
         }
 
 
-        [HttpPost("edith/{id}")]
+        [HttpPost("edith/{collectionId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CollectionModel collectionModel)
+        public async Task<IActionResult> Edit(int collectionId, CollectionModel collectionModel)
         {
-            if (id != collectionModel.Id)
+            if (collectionId != collectionModel.Id)
             {
                 return NotFound();
             }
@@ -131,7 +131,7 @@ namespace CollectionManager.Areas.Admin.Controllers
             {
                 try
                 {
-                    var collection = await _unitOfWork.Collection.GetCollectionAsync(id);
+                    var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId);
 
                     collection.Name = collectionModel.Name;
                     collection.Category = collectionModel.Category;
@@ -167,15 +167,15 @@ namespace CollectionManager.Areas.Admin.Controllers
             return View(collectionModel);
         }
 
-        [HttpGet("{id}/delete")]
-        public async Task<IActionResult> Delete(int? id, string userId)
+        [HttpGet("{collectionId}/delete")]
+        public async Task<IActionResult> Delete(int? collectionId, string userId)
         {
-            if (id == null)
+            if (collectionId == null)
             {
                 return NotFound();
             }
 
-            var collection = await _unitOfWork.Collection.GetCollectionAsync(id.Value);
+            var collection = await _unitOfWork.Collection.GetCollectionAsync(collectionId.Value);
             if (collection == null)
             {
                 return NotFound();

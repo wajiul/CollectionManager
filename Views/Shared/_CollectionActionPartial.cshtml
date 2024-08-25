@@ -3,8 +3,8 @@
     int collectionId = @Model;
 }
 
-<a asp-action="Edit" asp-controller="ProfileCollections" asp-route-id="@collectionId">@Resource.Edit</a> |
+<a asp-action="Edit" asp-controller="ProfileCollections" asp-route-collectionId="@collectionId">@Resource.Edit</a> |
 <a asp-action="Index" asp-controller="ProfileCollectionItems" asp-route-collectionId="@collectionId">@Resource.Viewitems</a> |
-<a asp-action="Delete" asp-controller="ProfileCollections" asp-route-id="@collectionId">@Resource.Delete</a> |
+<a asp-action="Delete" asp-controller="ProfileCollections" asp-route-collectionId="@collectionId">@Resource.Delete</a> |
 <a asp-action="ManageCustomField" asp-controller="ProfileCollections" asp-route-collectionId="@collectionId">@Resource.ManageCustomField</a>
 

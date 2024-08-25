@@ -70,7 +70,7 @@ namespace CollectionManager.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AddItem.
+        ///   Looks up a localized string similar to Add Item.
         /// </summary>
         public static string AddItem {
             get {

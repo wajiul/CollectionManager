@@ -11,6 +11,7 @@ namespace CollectionManager.Data_Access.Repositories
         void DeleteCollection(Collection collection);
         void DeleteCustomField(CustomField customField);
         bool DoesUserHasCustomField(int Id, string userId);
+        Task<string> GetCollectionNameAsync(int collectionId);
         Task<Collection?> GetCollectionAsync(int Id);
         Task<List<string>> GetCollectionCategoriesAsync();
         Task<IEnumerable<CollectionWithItemCountModel>> GetCollections();

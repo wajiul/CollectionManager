@@ -36,7 +36,7 @@
                     @if(displayAuthor)
                     {
                         <td>
-                            <a asp-action="Index" asp-controller="OtherUserProfile" asp-route-userId="@collection.UserId" asp-route-id="@collection.Id">@collection.Author</a>
+                            <a asp-action="Index" asp-controller="OtherUserProfile" asp-route-userId="@collection.UserId" asp-route-collectionId="@collection.Id">@collection.Author</a>
                         </td>
                     }
 
@@ -55,7 +55,7 @@
                     else
                     {
                         <td style="width:2rem;">
-                            <a class="btn btn-outline-info" asp-action="Collection" asp-controller="Collections" asp-route-id="@collection.Id">View</a>
+                            <a class="btn btn-outline-info" asp-action="Collection" asp-controller="Collections" asp-route-collectionId="@collection.Id">View</a>
                         </td>
                     }
                 </tr>

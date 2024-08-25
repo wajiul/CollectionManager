@@ -149,6 +149,11 @@ namespace CollectionManager.Data_Access.Repositories
             await _context.likes.AddAsync(like);
         }
 
+        public async Task<string> GetItemNameAsync(int itemId)
+        {
+            var item = await _context.items.FindAsync(itemId);
+            return item.Name;
+        }
         public async Task<CommentModel?> GetCommentAsync(int id)
         {
             return await _context.comments

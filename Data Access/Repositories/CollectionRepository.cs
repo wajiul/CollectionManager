@@ -97,6 +97,12 @@ namespace CollectionManager.Data_Access.Repositories
                 }).ToListAsync();
         }
 
+        public async Task<string> GetCollectionNameAsync(int collectionId)
+        {
+            var collection = await GetCollectionAsync(collectionId);
+            return collection.Name;
+        }
+
         public async Task<Collection?> GetCollectionAsync(int Id)
         {
             return await _context.collections.FindAsync(Id);

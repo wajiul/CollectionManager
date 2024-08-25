@@ -9,7 +9,7 @@
                     <div class="card-body pt-3 pb-2">
                         <div class="row align-items-center">
                             <div class="card-name col-md-6">
-                                <a asp-action="Collection" asp-controller="Collections" asp-route-id="@collection.Id">@collection.Name</a>
+                                <a asp-action="Collection" asp-controller="Collections" asp-route-collectionId="@collection.Id">@collection.Name</a>
                             </div>
                             <div class="card-item col-md-3">
                                 @collection.ItemCount
@@ -28,7 +28,7 @@
                                     asp-action="Index" 
                                     asp-controller="OtherUserProfile" 
                                     asp-route-userId="@collection.UserId"
-                                    asp-route-id="@collection.Id"
+                                    asp-route-collectionId="@collection.Id"
                                 >@collection.Author</a>
                             </div>
                         </div>

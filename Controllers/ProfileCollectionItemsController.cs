@@ -38,13 +38,13 @@ namespace CollectionManager.Controllers
             return View(collectionId);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Items(int? id, int? collectionId = null)
+        [HttpGet("{itemId}")]
+        public IActionResult Items(int? itemId, int? collectionId = null)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["UserId"] = userId;
             ViewData["CollectionId"] = collectionId;
-            return View(id);
+            return View(itemId);
         }
 
         [HttpGet("create")]
@@ -88,25 +88,25 @@ namespace CollectionManager.Controllers
             return View(newItem);
         }
 
-        [HttpGet("{id}/edit")]
-        public async Task<IActionResult> Edit(int Id)
+        [HttpGet("{itemId}/edit")]
+        public async Task<IActionResult> Edit(int itemId)
         {
-            var item = await _unitOfWork.Item.GetItemAsync(Id);
+            var item = await _unitOfWork.Item.GetItemAsync(itemId);
             var itemModel = _mapper.Map<ItemModel>(item);
             return View(itemModel);
         }
 
-        [HttpPost("{id}/edit")]
-        public async Task<IActionResult> Edit(int id, ItemModel updatedItem)
+        [HttpPost("{itemId}/edit")]
+        public async Task<IActionResult> Edit(int itemId, ItemModel updatedItem)
         {
-            if (id != updatedItem.Id)
+            if (itemId != updatedItem.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var item = await _unitOfWork.Item.GetItemAsync(id);
+                var item = await _unitOfWork.Item.GetItemAsync(itemId);
 
                 if (item == null)
                 {
@@ -166,16 +166,16 @@ namespace CollectionManager.Controllers
                 TempData["ToastrMessage"] = "Item updated successfully";
                 TempData["ToastrType"] = "success";
 
-                return RedirectToAction("Items", "ProfileCollectionItems", new { id = item.Id, collectionId = item.CollectionId});
+                return RedirectToAction("Items", "ProfileCollectionItems", new { itemId = item.Id, collectionId = item.CollectionId});
             }
 
             return View(updatedItem);
         }
 
-        [HttpGet("{id}/delete")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("{itemId}/delete")]
+        public async Task<IActionResult> Delete(int itemId)
         {
-            var item = await _unitOfWork.Item.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(itemId);
             if(item == null)
             {
                 return NotFound();

@@ -36,30 +36,30 @@ namespace CollectionManager.Controllers
             return View();
         }
 
-        [HttpGet("{id}/items")]
-        public IActionResult Collection(int? id)
+        [HttpGet("{collectionId}/items")]
+        public IActionResult Collection(int? collectionId)
         {
-            if (id == null)
+            if (collectionId == null)
             {
                 return NotFound();
             }
-            var exist = _unitOfWork.Collection.IsCollectionExist(id.Value);
+            var exist = _unitOfWork.Collection.IsCollectionExist(collectionId.Value);
 
             if (!exist)
             {
                 return NotFound();
             }
 
-            return View(id.Value);
+            return View(collectionId.Value);
         }
 
-        [HttpGet("{collectionId}/items/{id}")]
-        public IActionResult Items(int? Id, int? collectionId = null)
+        [HttpGet("{collectionId}/items/{itemId}")]
+        public IActionResult Items(int? itemId, int? collectionId = null)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["UserId"] = userId;
             ViewData["CollectionId"] = collectionId;
-            return View(Id);
+            return View(itemId);
         }
 
         [HttpPost("items/like")]

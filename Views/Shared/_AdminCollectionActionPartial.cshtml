@@ -4,8 +4,8 @@
     string userId = @Model.userId;
 }
 
-<a asp-action="Edit" asp-controller="ManageUserCollections" asp-area="admin" asp-route-id="@collectionId" asp-route-userId="@userId">@Resource.Edit</a> |
+<a asp-action="Edit" asp-controller="ManageUserCollections" asp-area="admin" asp-route-collectionId="@collectionId" asp-route-userId="@userId">@Resource.Edit</a> |
 <a asp-action="Index" asp-controller="ManageUserCollectionItems" asp-area="admin" asp-route-collectionId="@collectionId" asp-route-userId="@userId">@Resource.Viewitems</a> |
-<a asp-action="Delete" asp-controller="ManageUserCollections" asp-area="admin" asp-route-id="@collectionId" asp-route-userId="@userId">@Resource.Delete</a> |
+<a asp-action="Delete" asp-controller="ManageUserCollections" asp-area="admin" asp-route-collectionId="@collectionId" asp-route-userId="@userId">@Resource.Delete</a> |
 <a asp-action="ManageCustomField" asp-controller="ManageUserCollections" asp-area="admin" asp-route-collectionId="@collectionId" asp-route-userId="@userId">@Resource.ManageCustomField</a>
 

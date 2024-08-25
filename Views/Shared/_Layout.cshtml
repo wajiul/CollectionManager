@@ -83,6 +83,9 @@
     </header>
     <div style="margin-top:4rem; min-height:100vh;">
         <main role="main" class="pb-3">
+            <div class="container">
+                @await Component.InvokeAsync("Bredcrumb")
+            </div>
             @RenderBody()
         </main>
     </div>

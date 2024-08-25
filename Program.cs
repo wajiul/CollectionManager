@@ -13,9 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-builder.Services.AddControllersWithViews()
-        .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-        .AddDataAnnotationsLocalization();
+builder.Services.AddControllersWithViews();
 
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -37,10 +35,13 @@ builder.Services.AddDbContext<CollectionMangerDbContext>(options =>
 });
 
 builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<CollectionMangerDbContext>();
+
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddSignalR();
+
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.Zero;

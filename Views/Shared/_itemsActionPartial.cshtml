@@ -10,7 +10,7 @@
     asp-action="Items" 
     asp-controller="ProfileCollectionItems" 
     asp-route-collectionId="@CollectionId"
-    asp-route-id="@Id"
+    asp-route-itemId="@Id"
     class="btn btn-sm btn-outline-info"
 >
     @Resource.Details
@@ -19,7 +19,7 @@
 <a 
     asp-action="Edit" 
     asp-controller="ProfileCollectionItems" 
-    asp-route-id="@Id"
+    asp-route-itemId="@Id"
     asp-route-collectionId="@CollectionId"
     class="btn btn-sm btn-outline-secondary"
 >
@@ -28,7 +28,7 @@
 
 <a asp-action="Delete"
    asp-controller="ProfileCollectionItems"
-   asp-route-id="@Id"
+   asp-route-itemId="@Id"
    asp-route-collectionId="@CollectionId"
    class="btn btn-sm btn-outline-danger"
 >

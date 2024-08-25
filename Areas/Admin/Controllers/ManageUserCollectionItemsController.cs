@@ -34,11 +34,11 @@ namespace CollectionManager.Areas.Admin.Controllers
             return View(collectionId);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Items(int? id, string userId)
+        [HttpGet("{itemId}")]
+        public IActionResult Items(int? itemId, string userId)
         {
             ViewData["UserId"] = userId;
-            return View(id);
+            return View(itemId);
         }
 
         [HttpGet("create")]
@@ -83,26 +83,26 @@ namespace CollectionManager.Areas.Admin.Controllers
             return View(newItem);
         }
 
-        [HttpGet("{id}/edit")]
-        public async Task<IActionResult> Edit(int Id, string userId)
+        [HttpGet("{itemId}/edit")]
+        public async Task<IActionResult> Edit(int itemId, string userId)
         {
-            var item = await _unitOfWork.Item.GetItemAsync(Id);
+            var item = await _unitOfWork.Item.GetItemAsync(itemId);
             var itemModel = _mapper.Map<ItemModel>(item);
             ViewData["UserId"] = userId;
             return View(itemModel);
         }
 
-        [HttpPost("{id}/edit")]
-        public async Task<IActionResult> Edit(int id, ItemModel updatedItem)
+        [HttpPost("{itemId}/edit")]
+        public async Task<IActionResult> Edit(int itemId, ItemModel updatedItem)
         {
-            if (id != updatedItem.Id)
+            if (itemId != updatedItem.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var item = await _unitOfWork.Item.GetItemAsync(id);
+                var item = await _unitOfWork.Item.GetItemAsync(itemId);
 
                 if (item == null)
                 {
@@ -160,18 +160,21 @@ namespace CollectionManager.Areas.Admin.Controllers
                 await _unitOfWork.Save();
                 _unitOfWork.Item.UpdateSearchVector();
 
+                TempData["ToastrMessage"] = "Item updated successfully";
+                TempData["ToastrType"] = "success";
+
                 var userId = RouteData.Values["userId"].ToString();
 
-                return RedirectToAction("Items", "ManageUserCollectionItems", new { id = item.Id, collectionId = item.CollectionId, userId = userId});
+                return RedirectToAction("Items", "ManageUserCollectionItems", new { itemId = item.Id, collectionId = item.CollectionId, userId = userId});
             }
 
             return View(updatedItem);
         }
 
-        [HttpGet("{id}/delete")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("{itemId}/delete")]
+        public async Task<IActionResult> Delete(int itemId)
         {
-            var item = await _unitOfWork.Item.GetItemAsync(id);
+            var item = await _unitOfWork.Item.GetItemAsync(itemId);
             if (item == null)
             {
                 return NotFound();
@@ -195,6 +198,9 @@ namespace CollectionManager.Areas.Admin.Controllers
             await  _unitOfWork.Item.Delete(id);
             await _unitOfWork.Save();
             _unitOfWork.Item.UpdateSearchVector();
+
+            TempData["ToastrMessage"] = "Item deleted successfully";
+            TempData["ToastrType"] = "success";
 
             var userId = RouteData.Values["userId"].ToString();    
             return RedirectToAction("Index", new {collectionId = item.CollectionId, userId = userId});

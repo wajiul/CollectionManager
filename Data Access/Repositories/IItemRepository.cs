@@ -12,6 +12,7 @@ namespace CollectionManager.Data_Access.Repositories
         Task Delete(int id);
         Task<CommentModel?> GetCommentAsync(int id);
         Task<Item?> GetItemAsync(int id);
+        Task<string> GetItemNameAsync(int itemId);
         Task<IEnumerable<MatchedItemModel>> GetItemsByTagAsync(int tagId);
         Task<Tag?> GetTagAsync(string tagName);
         Task<ItemWithReactionModel> GetItemWithReactionsAsync(int itemId);
