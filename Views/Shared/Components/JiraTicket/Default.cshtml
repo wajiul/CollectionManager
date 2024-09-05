@@ -1,0 +1,42 @@
+﻿@model JiraResponse 
+<!-- Support Tickets Section -->
+<div class="tickets-section">
+    <h3>Support Tickets</h3>
+
+    <!-- Example Ticket Card -->
+    @foreach(var issue in Model.Issues)
+    {
+        string issueStatus = issue.Fields.Status.Name;
+        string issuePrioriy = issue.Fields.Priority.Name;
+     
+        <div class="ticket-card">
+            <div class="ticket-info">
+                <span class="ticket-summary">@issue.Fields.Summary</span>
+                <span class="ticket-id">ID: JIRA-@issue.Id</span>
+            </div>
+
+            <div class="ticket-status">
+                @if(issueStatus.ToLower().Contains("to do")) 
+                {
+                    <span class="badge rounded-pill bg-success">@issue.Fields.Status.Name</span>
+                }
+                else if(issueStatus.ToLower().Contains("in progress")) 
+                {
+                    <span class="badge rounded-pill bg-warning">@issue.Fields.Status.Name</span>
+                }
+                else
+                {
+                    <span class="badge rounded-pill bg-danger">@issue.Fields.Status.Name</span>
+                }
+
+                <span class="badge rounded-pill bg-light ms-1">@issuePrioriy</span>
+
+            </div>
+        </div>
+    }
+
+   
+
+    
+
+</div>

@@ -88,12 +88,20 @@
             </div>
             @RenderBody()
         </main>
+
+        <div>
+            @{
+                // Get the complete URL including scheme, host, path, and query string
+                var currentUrl = $"{ViewContext.HttpContext.Request.Scheme}://{ViewContext.HttpContext.Request.Host}{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+            }
+            <a id="createSupportTicket" asp-action="CreateTicket" asp-controller="JiraIntegration" asp-route-currentUrl="@currentUrl">Create Support Ticket</a>
+        </div>
     </div>
 
     <footer class="border-top text-muted">
         <div class="container text-center">
             <p class="mb-0 pb-0">&copy; 2024 - Collection Manager(CM)</p>
-            <p id="developer">@Resource.Developer</p>
+            <p id="developer">@Resource.Developer</p> 
         </div>
     </footer>
 

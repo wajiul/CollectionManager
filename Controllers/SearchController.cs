@@ -25,8 +25,6 @@ namespace CollectionManager.Controllers
                 return View(new SearchResultModel());
             }
 
-            _unitOfWork.Item.UpdateSearchVector();
-
             var words = query.Split(' ');
             var queryString = string.Join(" | ", words.Select(w => $"{w}:*"));
 

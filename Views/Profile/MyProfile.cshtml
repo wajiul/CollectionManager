@@ -1,15 +1,31 @@
-﻿
+﻿@model UserProfileModel
 <div class="container">
-    <h1>User's Profile</h1>
-    <ul>
-        <li>User information</li>
-        <li>Total collection</li>
-        <li>Total Items</li>
-        <li>Likes</li>
-        <li>Comments</li>
-        <li>Others</li>
-        <li>
-            <a asp-action="Index" asp-controller="ProfileCollections">Collections</a>
-        </li>
-    </ul>
+
+    <!-- Profile Header Section -->
+    <div class="profile-header mt-3 mb-5">
+        <div class="profile-info">
+            <img src="profile-pic.jpg">
+            <div class="profile-details">
+                <h2>@string.Concat(Model.FirstName, " ", Model.LastName)</h2>
+                <p>@Model.Email</p>
+            </div>
+
+        </div>
+
+        <a class="btn btn-light rounded-5 text-success" asp-action="Index" asp-controller="ProfileCollections">My Collections</a>
+
+        @if(Model.IsSalesforceConnected)
+        {
+            <button class="btn btn-primary">Salesforce Connected</button>
+        }
+        else
+        {
+            <a asp-action="LinkToSalesforce"  class="btn btn-info rounded-5">Connect to Salesforce</a>
+        }
+
+    </div>
+
+
+    @await Component.InvokeAsync("JiraTicket", new {userId = Model.Id, email = Model.Email})
 </div>
+

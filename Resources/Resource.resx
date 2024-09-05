@@ -213,6 +213,9 @@
   <data name="Items" xml:space="preserve">
     <value>Items</value>
   </data>
+  <data name="Key" xml:space="preserve">
+    <value>Key</value>
+  </data>
   <data name="Like" xml:space="preserve">
     <value>Like</value>
   </data>
@@ -237,6 +240,9 @@
   <data name="Postcomment" xml:space="preserve">
     <value>Post comment</value>
   </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
   <data name="RecentlyAddedItems" xml:space="preserve">
     <value>Recently Added Items</value>
   </data>
@@ -258,8 +264,14 @@
   <data name="Submit" xml:space="preserve">
     <value>Submit</value>
   </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
   <data name="Tags" xml:space="preserve">
     <value>Tags</value>
+  </data>
+  <data name="Tickets" xml:space="preserve">
+    <value>Tickets</value>
   </data>
   <data name="Top5LargestCollections" xml:space="preserve">
     <value>Top 5 Largest Collections</value>
